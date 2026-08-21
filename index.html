@@ -231,9 +231,11 @@
       <div class="field" style="margin-bottom:0">
         <label for="modelSel">Modèle</label>
         <select id="modelSel">
-          <option value="gemini-2.5-flash">gemini-2.5-flash — recommandé</option>
-          <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite — plus rapide</option>
+          <option value="gemini-3.6-flash">gemini-3.6-flash — recommandé</option>
+          <option value="gemini-3.7-flash">gemini-3.7-flash — dernier sorti</option>
+          <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite — plus rapide</option>
         </select>
+        <p class="hint">La liste est actualisée automatiquement avec les modèles disponibles pour votre clé.</p>
       </div>
     </details>
   </section>
@@ -312,11 +314,46 @@ apiKeyInput.value = localStorage.getItem("lbcvtd_google_key") || "";
 if (!apiKeyInput.value) $("settingsBox").open = true;
 apiKeyInput.addEventListener("change", () => {
   localStorage.setItem("lbcvtd_google_key", apiKeyInput.value.trim());
+  refreshModels();
 });
 const modelSel = $("modelSel");
-modelSel.value = localStorage.getItem("lbcvtd_model") || "gemini-2.5-flash";
-if (!modelSel.value) modelSel.value = "gemini-2.5-flash";
+modelSel.value = localStorage.getItem("lbcvtd_model") || "gemini-3.6-flash";
+if (!modelSel.value) modelSel.value = "gemini-3.6-flash"; // valeur mémorisée absente des options
 modelSel.addEventListener("change", () => localStorage.setItem("lbcvtd_model", modelSel.value));
+
+/* Actualise la liste avec les modèles Flash réellement disponibles pour cette clé
+   (Google retire régulièrement les anciens modèles pour les nouveaux comptes). */
+async function refreshModels() {
+  const key = apiKeyInput.value.trim();
+  if (!key) return;
+  try {
+    const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200", {
+      headers: { "x-goog-api-key": key },
+    });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const models = (data.models || [])
+      .filter((m) => (m.supportedGenerationMethods || []).includes("generateContent"))
+      .map((m) => (m.name || "").replace(/^models\//, ""))
+      .filter((n) => /flash/.test(n) && !/(image|tts|audio|live|embedding|preview|exp)/.test(n))
+      .sort()
+      .reverse(); // versions récentes en premier
+    if (!models.length) return;
+    const current = modelSel.value;
+    modelSel.innerHTML = "";
+    for (const n of models) {
+      const opt = document.createElement("option");
+      opt.value = n;
+      opt.textContent = n;
+      modelSel.appendChild(opt);
+    }
+    modelSel.value = models.includes(current) ? current
+      : models.includes("gemini-3.6-flash") ? "gemini-3.6-flash"
+      : models[0];
+    localStorage.setItem("lbcvtd_model", modelSel.value);
+  } catch {} // hors ligne ou clé invalide : on garde la liste statique
+}
+refreshModels();
 
 /* ---------- Onglets plateforme ---------- */
 $("tabs").addEventListener("click", (e) => {
@@ -533,6 +570,7 @@ async function callGemini(apiKey, photoList, userText) {
     let msg = `Erreur API (${resp.status})${detail ? " : " + detail : ""}`;
     if (resp.status === 400 && /api key/i.test(detail)) msg = "Clé API invalide. Vérifiez-la dans les Réglages (créez-la sur aistudio.google.com).";
     if (resp.status === 403) msg = "Clé API refusée ou non autorisée. Vérifiez-la dans les Réglages.";
+    if (resp.status === 404) { msg = `Le modèle ${modelSel.value} n'est plus disponible. La liste vient d'être actualisée : choisissez un autre modèle dans les Réglages et relancez.`; refreshModels(); }
     if (resp.status === 429) msg = "Limite du palier gratuit atteinte. Patientez une minute puis réessayez.";
     if (resp.status === 500 || resp.status === 503) msg = "L'API est momentanément surchargée. Réessayez dans quelques instants.";
     const err = new Error(msg);

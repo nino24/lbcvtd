@@ -7,7 +7,7 @@ Un outil tout simple : vous déposez une ou plusieurs **photos** d'un objet, et 
 - **URL de la fiche produit** sur le web, le cas échéant (site du fabricant en priorité)
 - Catégorie suggérée, prix conseillé et état estimé
 
-L'analyse des photos et la recherche web sont faites par l'API Google Gemini (modèle `gemini-2.5-flash` par défaut, avec la recherche Google intégrée) — **gratuite** pour cet usage avec une clé AI Studio. Deux plateformes : **Le Bon Coin** (par défaut) et **Vinted** (titre plus court, description avec hashtags).
+L'analyse des photos et la recherche web sont faites par l'API Google Gemini (modèle `gemini-3.6-flash` par défaut, avec la recherche Google intégrée) — **gratuite** pour cet usage avec une clé AI Studio. Deux plateformes : **Le Bon Coin** (par défaut) et **Vinted** (titre plus court, description avec hashtags).
 
 ## Mode « En série + SKU »
 
@@ -39,15 +39,15 @@ L'outil sera alors disponible à l'adresse `https://<votre-compte>.github.io/lbc
 **0 €** avec une clé AI Studio gratuite, dans les limites du palier gratuit (largement suffisant pour un usage personnel) :
 
 - jusqu'à ~1 000 requêtes par jour sur les modèles Flash, avec un débit de 5 à 15 requêtes/minute — en cas de dépassement ponctuel, l'outil attend et réessaie automatiquement ;
-- la recherche Google intégrée (« grounding ») est gratuite jusqu'à 1 500 requêtes/jour sur la famille Gemini 2.5.
+- la recherche Google intégrée (« grounding ») est gratuite jusqu'à 5 000 requêtes/mois sur la famille Gemini 3.x.
 
-Même en passant sur le palier payant, `gemini-2.5-flash-lite` revient à moins d'un centime par annonce.
+Même en passant sur le palier payant, un modèle Flash-Lite revient à moins d'un centime par annonce.
 
 ## Confidentialité et notes techniques
 
 - Les photos sont redimensionnées dans le navigateur puis envoyées **directement à l'API Google Gemini** — aucun autre serveur n'intervient.
 - Les photos au format HEIC (iPhone) sont converties automatiquement sur Safari ; sur les autres navigateurs, exportez-les d'abord en JPEG.
-- Le modèle est réglable dans la section *Réglages* (`gemini-2.5-flash` recommandé, `gemini-2.5-flash-lite` plus rapide) ; pour ajouter un autre modèle, il suffit d'ajouter une `<option>` dans `index.html`.
+- Le modèle est réglable dans la section *Réglages* (`gemini-3.6-flash` recommandé). La liste est **actualisée automatiquement** avec les modèles Flash disponibles pour votre clé — Google retirant régulièrement les anciens modèles, l'outil ne reste jamais bloqué sur un modèle disparu.
 
 ## Pistes d'évolution
 
