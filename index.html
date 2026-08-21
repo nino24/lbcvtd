@@ -115,6 +115,27 @@
   .url-line a { color: var(--accent); word-break: break-all; font-size: .9rem; }
   .usage { font-size: .75rem; color: var(--muted); text-align: right; margin-top: .5rem; }
 
+  /* Mode série */
+  .tabs.small button { padding: .5rem; font-size: .85rem; }
+  #singleMode:not([hidden]), #batchMode:not([hidden]) { display: flex; flex-direction: column; gap: 1rem; }
+  .article { border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem; margin-bottom: .75rem; }
+  .article-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
+  .article-head .sku { font-weight: 700; color: var(--accent); font-size: .95rem; }
+  .article-head button { border: none; background: none; cursor: pointer; font-size: 1rem; }
+  .dropzone.small { padding: .7rem .5rem; font-size: .85rem; }
+  .add-article { width: 100%; padding: .65rem; border: 1.5px dashed var(--border); background: none; border-radius: 10px; cursor: pointer; color: var(--muted); font-weight: 600; font-size: .95rem; }
+  .checkline { display: flex; gap: .5rem; align-items: center; font-weight: 400; font-size: .85rem; }
+  .checkline input { width: auto; }
+  .batch-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .batch-actions button { flex: 1; padding: .6rem .5rem; border: 1px solid var(--border); border-radius: 10px; background: #fff; cursor: pointer; font-weight: 600; font-size: .85rem; white-space: nowrap; }
+  details.batch-item { border: 1px solid var(--border); border-radius: var(--radius); padding: .6rem .75rem; margin-bottom: .6rem; }
+  details.batch-item summary { cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: .6rem; }
+  details.batch-item summary img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+  details.batch-item summary .sku { color: var(--accent); }
+  details.batch-item summary .bi-label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 400; }
+  details.batch-item[open] summary { margin-bottom: .75rem; }
+  .batch-err { color: #a4271a; font-size: .85rem; }
+
   details.settings summary { cursor: pointer; font-size: .9rem; font-weight: 600; color: var(--muted); }
   details.settings[open] summary { margin-bottom: .75rem; }
   footer { text-align: center; font-size: .75rem; color: var(--muted); padding-bottom: 1rem; }
@@ -132,6 +153,12 @@
     <button type="button" data-value="vinted">Vinted</button>
   </div>
 
+  <div class="tabs small" id="modeTabs">
+    <button type="button" data-value="single" class="active">À l'unité</button>
+    <button type="button" data-value="batch">En série + SKU</button>
+  </div>
+
+  <div id="singleMode">
   <section class="card">
     <h2>1. Photos de l'objet</h2>
     <div class="dropzone" id="dropzone">
@@ -167,6 +194,31 @@
       <textarea id="infos" rows="2" placeholder="Marque, taille, défauts, accessoires inclus, raison de la vente…"></textarea>
     </div>
   </section>
+  </div>
+
+  <div id="batchMode" hidden>
+    <section class="card">
+      <h2>1. SKU de la session</h2>
+      <div class="row">
+        <div class="field">
+          <label for="skuPrefix">Préfixe</label>
+          <input type="text" id="skuPrefix" placeholder="LBC-">
+        </div>
+        <div class="field">
+          <label for="skuStart">Premier numéro</label>
+          <input type="text" id="skuStart" inputmode="numeric" value="1">
+        </div>
+      </div>
+      <label class="checkline"><input type="checkbox" id="skuInDesc" checked> Ajouter la référence SKU à la fin de chaque description</label>
+      <p class="hint" id="skuPreview"></p>
+    </section>
+
+    <section class="card">
+      <h2>2. Articles</h2>
+      <div id="articles"></div>
+      <button type="button" class="add-article" id="addArticle">＋ Ajouter un article</button>
+    </section>
+  </div>
 
   <section class="card">
     <details class="settings" id="settingsBox">
@@ -216,6 +268,17 @@
     <div class="usage" id="usage"></div>
   </section>
 
+  <section class="card" id="batchResult" hidden>
+    <h2 id="batchResultTitle">Annonces générées</h2>
+    <div class="batch-actions">
+      <button type="button" id="printLabels">🖨 Imprimer les étiquettes</button>
+      <button type="button" id="dlLabels">⬇️ Fichier étiquettes</button>
+      <button type="button" id="exportCsv">⬇️ Export CSV</button>
+    </div>
+    <div id="batchItems"></div>
+    <div class="usage" id="batchUsage"></div>
+  </section>
+
   <footer>Vos photos sont envoyées directement à l'API Anthropic depuis votre navigateur — aucun autre serveur.</footer>
 </div>
 
@@ -231,7 +294,10 @@ const LIMITS = {
 };
 
 let platform = "leboncoin";
-let photos = [];   // { dataUrl, base64, mediaType }
+let mode = "single";
+let photos = [];       // mode « à l'unité » : { dataUrl, base64, mediaType }
+let articles = [];     // mode série : { photos: [], infos: "", prix: "" }
+let batchResults = []; // { sku, ad, thumb } ou { sku, error, thumb }
 
 /* ---------- Clé API ---------- */
 const apiKeyInput = $("apiKey");
@@ -251,6 +317,44 @@ $("tabs").addEventListener("click", (e) => {
   updateCounts();
 });
 
+/* ---------- Mode à l'unité / en série ---------- */
+$("modeTabs").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-value]");
+  if (!btn) return;
+  mode = btn.dataset.value;
+  for (const b of $("modeTabs").querySelectorAll("button")) b.classList.toggle("active", b === btn);
+  $("singleMode").hidden = mode !== "single";
+  $("batchMode").hidden = mode !== "batch";
+  $("result").hidden = true;
+  $("batchResult").hidden = mode !== "batch" || batchResults.length === 0;
+  $("goBtn").textContent = mode === "single" ? "✨ Générer l'annonce" : "✨ Générer la série";
+  hideError();
+  if (mode === "batch" && articles.length === 0) addArticle();
+});
+
+/* ---------- SKU (réglés en début de session, mémorisés) ---------- */
+const skuPrefix = $("skuPrefix");
+const skuStart = $("skuStart");
+skuPrefix.value = localStorage.getItem("lbcvtd_sku_prefix") ?? "LBC-";
+skuStart.value = localStorage.getItem("lbcvtd_sku_start") ?? "1";
+
+function skuFor(i) {
+  const start = parseInt(skuStart.value, 10) || 1;
+  const width = Math.max(3, skuStart.value.trim().length);
+  return skuPrefix.value.trim() + String(start + i).padStart(width, "0");
+}
+function saveSkuSettings() {
+  localStorage.setItem("lbcvtd_sku_prefix", skuPrefix.value);
+  localStorage.setItem("lbcvtd_sku_start", skuStart.value);
+}
+function refreshSkus() {
+  document.querySelectorAll("#articles .article-head .sku").forEach((el, i) => { el.textContent = skuFor(i); });
+  $("skuPreview").textContent = articles.length > 1
+    ? `SKU de cette série : ${skuFor(0)} → ${skuFor(articles.length - 1)}`
+    : `Prochain SKU : ${skuFor(0)}`;
+}
+for (const el of [skuPrefix, skuStart]) el.addEventListener("input", () => { saveSkuSettings(); refreshSkus(); });
+
 /* ---------- Photos ---------- */
 const dropzone = $("dropzone");
 const fileInput = $("fileInput");
@@ -265,17 +369,21 @@ dropzone.addEventListener("drop", (e) => {
 fileInput.addEventListener("change", () => { addFiles(fileInput.files); fileInput.value = ""; });
 
 async function addFiles(fileList) {
+  await importFiles(photos, fileList);
+  renderThumbs();
+}
+
+async function importFiles(target, fileList) {
   hideError();
   for (const file of Array.from(fileList)) {
-    if (photos.length >= MAX_PHOTOS) { showError(`Maximum ${MAX_PHOTOS} photos.`); break; }
+    if (target.length >= MAX_PHOTOS) { showError(`Maximum ${MAX_PHOTOS} photos par annonce.`); break; }
     if (!file.type.startsWith("image/") && !/\.(heic|heif)$/i.test(file.name)) continue;
     try {
-      photos.push(await preparePhoto(file));
+      target.push(await preparePhoto(file));
     } catch {
       showError(`Impossible de lire « ${file.name} ». Si c'est une photo iPhone au format HEIC, exportez-la en JPEG puis réessayez.`);
     }
   }
-  renderThumbs();
 }
 
 function preparePhoto(file) {
@@ -300,9 +408,12 @@ function preparePhoto(file) {
 }
 
 function renderThumbs() {
-  const box = $("thumbs");
+  renderThumbsInto($("thumbs"), photos);
+}
+
+function renderThumbsInto(box, list) {
   box.innerHTML = "";
-  photos.forEach((p, i) => {
+  list.forEach((p, i) => {
     const div = document.createElement("div");
     div.className = "thumb";
     const img = document.createElement("img");
@@ -312,7 +423,7 @@ function renderThumbs() {
     del.type = "button";
     del.textContent = "×";
     del.setAttribute("aria-label", "Retirer cette photo");
-    del.addEventListener("click", () => { photos.splice(i, 1); renderThumbs(); });
+    del.addEventListener("click", () => { list.splice(i, 1); renderThumbsInto(box, list); });
     div.append(img, del);
     box.appendChild(div);
   });
@@ -351,11 +462,8 @@ Réponds à la fin UNIQUEMENT avec un objet JSON exactement de cette forme, sans
   return common + "\n\n" + perPlatform;
 }
 
-function buildUserText() {
-  const parts = [`Génère l'annonce à partir de ${photos.length > 1 ? "ces photos (elles montrent le même objet)" : "cette photo"}.`];
-  const etat = $("etat").value;
-  const prix = $("prix").value.trim();
-  const infos = $("infos").value.trim();
+function buildUserText(nPhotos, etat, prix, infos) {
+  const parts = [`Génère l'annonce à partir de ${nPhotos > 1 ? "ces photos (elles montrent le même objet)" : "cette photo"}.`];
   if (etat) parts.push(`État indiqué par le vendeur : ${etat}.`);
   if (prix) parts.push(`Prix souhaité par le vendeur : ${prix} €. Reprends ce prix dans "prix_conseille" ; s'il est très éloigné du marché, indique plutôt "${prix} € (marché : …)".`);
   if (infos) parts.push(`Infos complémentaires du vendeur : ${infos}`);
@@ -370,18 +478,80 @@ const STATUS_STEPS = [
   "Rédaction de l'annonce…",
 ];
 
-$("goBtn").addEventListener("click", generate);
+$("goBtn").addEventListener("click", () => (mode === "single" ? generateSingle() : generateBatch()));
 
-async function generate() {
-  hideError();
-  $("result").hidden = true;
-
+function requireApiKey() {
   const apiKey = apiKeyInput.value.trim();
   if (!apiKey) {
     $("settingsBox").open = true;
     apiKeyInput.focus();
-    return showError("Renseignez d'abord votre clé API Anthropic (section Réglages).");
+    showError("Renseignez d'abord votre clé API Anthropic (section Réglages).");
+    return null;
   }
+  return apiKey;
+}
+
+async function callClaude(apiKey, photoList, userText) {
+  const body = {
+    model: "claude-opus-5",
+    max_tokens: 8000,
+    fallbacks: "default",
+    system: buildSystemPrompt(),
+    tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 4 }],
+    messages: [{
+      role: "user",
+      content: [
+        ...photoList.map((p) => ({
+          type: "image",
+          source: { type: "base64", media_type: p.mediaType, data: p.base64 },
+        })),
+        { type: "text", text: userText },
+      ],
+    }],
+  };
+
+  const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-beta": "server-side-fallback-2026-07-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!resp.ok) {
+    let detail = "";
+    try { detail = (await resp.json()).error?.message || ""; } catch {}
+    if (resp.status === 401) throw new Error("Clé API invalide ou révoquée. Vérifiez-la dans les Réglages.");
+    if (resp.status === 429) throw new Error("Limite de requêtes atteinte. Patientez une minute puis réessayez.");
+    if (resp.status === 529) throw new Error("L'API est momentanément surchargée. Réessayez dans quelques instants.");
+    throw new Error(`Erreur API (${resp.status})${detail ? " : " + detail : ""}`);
+  }
+
+  const data = await resp.json();
+  if (data.stop_reason === "refusal") {
+    throw new Error("La requête a été refusée par les filtres de sécurité de l'API. Réessayez avec d'autres photos.");
+  }
+  const text = (data.content || [])
+    .filter((b) => b.type === "text")
+    .map((b) => b.text)
+    .join("\n");
+  const ad = extractJson(text);
+  if (!ad || !ad.titre) {
+    throw new Error("Réponse inattendue de l'API — réessayez.\n\nDétail : " + text.slice(0, 400));
+  }
+  return { ad, usage: data.usage || {} };
+}
+
+async function generateSingle() {
+  hideError();
+  $("result").hidden = true;
+
+  const apiKey = requireApiKey();
+  if (!apiKey) return;
   if (photos.length === 0) return showError("Ajoutez au moins une photo de l'objet.");
 
   const btn = $("goBtn");
@@ -394,69 +564,75 @@ async function generate() {
   const ticker = setInterval(showStep, 6000);
 
   try {
-    const body = {
-      model: "claude-opus-5",
-      max_tokens: 8000,
-      fallbacks: "default",
-      system: buildSystemPrompt(),
-      tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 4 }],
-      messages: [{
-        role: "user",
-        content: [
-          ...photos.map((p) => ({
-            type: "image",
-            source: { type: "base64", media_type: p.mediaType, data: p.base64 },
-          })),
-          { type: "text", text: buildUserText() },
-        ],
-      }],
-    };
-
-    const resp = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "anthropic-beta": "server-side-fallback-2026-07-01",
-        "anthropic-dangerous-direct-browser-access": "true",
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!resp.ok) {
-      let detail = "";
-      try { detail = (await resp.json()).error?.message || ""; } catch {}
-      if (resp.status === 401) throw new Error("Clé API invalide ou révoquée. Vérifiez-la dans les Réglages.");
-      if (resp.status === 429) throw new Error("Limite de requêtes atteinte. Patientez une minute puis réessayez.");
-      if (resp.status === 529) throw new Error("L'API est momentanément surchargée. Réessayez dans quelques instants.");
-      throw new Error(`Erreur API (${resp.status})${detail ? " : " + detail : ""}`);
-    }
-
-    const data = await resp.json();
-    if (data.stop_reason === "refusal") {
-      throw new Error("La requête a été refusée par les filtres de sécurité de l'API. Réessayez avec d'autres photos.");
-    }
-    const text = (data.content || [])
-      .filter((b) => b.type === "text")
-      .map((b) => b.text)
-      .join("\n");
-    const ad = extractJson(text);
-    if (!ad || !ad.titre) {
-      throw new Error("Réponse inattendue de l'API — réessayez.\n\nDétail : " + text.slice(0, 400));
-    }
-    renderResult(ad, data.usage);
+    const userText = buildUserText(photos.length, $("etat").value, $("prix").value.trim(), $("infos").value.trim());
+    const { ad, usage } = await callClaude(apiKey, photos, userText);
+    renderResult(ad, usage);
   } catch (err) {
-    if (err instanceof TypeError) {
-      showError("Impossible de joindre l'API Anthropic. Vérifiez votre connexion internet.");
-    } else {
-      showError(err.message);
-    }
+    showError(err instanceof TypeError ? "Impossible de joindre l'API Anthropic. Vérifiez votre connexion internet." : err.message);
   } finally {
     clearInterval(ticker);
     statusEl.hidden = true;
     btn.disabled = false;
   }
+}
+
+async function generateBatch() {
+  hideError();
+  const apiKey = requireApiKey();
+  if (!apiKey) return;
+
+  articles = articles.filter((a) => a.photos.length > 0 || a.infos.trim() || a.prix.trim());
+  renderArticles();
+  if (articles.length === 0) { addArticle(); return showError("Ajoutez au moins un article avec une photo."); }
+  if (articles.some((a) => a.photos.length === 0)) return showError("Chaque article doit avoir au moins une photo.");
+
+  saveSkuSettings();
+  batchResults = [];
+  $("batchItems").innerHTML = "";
+  $("batchUsage").textContent = "";
+  $("batchResultTitle").textContent = platform === "leboncoin" ? "Annonces Le Bon Coin générées" : "Annonces Vinted générées";
+
+  const btn = $("goBtn");
+  btn.disabled = true;
+  const statusEl = $("status");
+  statusEl.hidden = false;
+  let totalIn = 0, totalOut = 0;
+
+  for (let i = 0; i < articles.length; i++) {
+    const art = articles[i];
+    const sku = skuFor(i);
+    statusEl.innerHTML = `<span class="spinner"></span>Article ${i + 1}/${articles.length} (${sku}) — analyse, recherche web et rédaction…`;
+    try {
+      const userText = buildUserText(art.photos.length, "", art.prix.trim(), art.infos.trim());
+      const { ad, usage } = await callClaude(apiKey, art.photos, userText);
+      if ($("skuInDesc").checked) ad.description = `${ad.description || ""}\n\nRéf. : ${sku}`.trim();
+      batchResults.push({ sku, ad, thumb: art.photos[0].dataUrl });
+      totalIn += usage.input_tokens || 0;
+      totalOut += usage.output_tokens || 0;
+    } catch (err) {
+      batchResults.push({
+        sku,
+        error: err instanceof TypeError ? "Connexion à l'API impossible." : err.message,
+        thumb: art.photos[0].dataUrl,
+      });
+    }
+    renderBatchResults();
+    $("batchResult").hidden = false;
+    if (i < articles.length - 1) await new Promise((r) => setTimeout(r, 800));
+  }
+
+  const cost = (totalIn * 5 + totalOut * 25) / 1e6;
+  $("batchUsage").textContent = `${totalIn} tokens entrée · ${totalOut} sortie · coût ≈ $${cost.toFixed(3)}`;
+
+  // La session avance : le prochain lot repart après le dernier SKU utilisé.
+  const width = Math.max(3, skuStart.value.trim().length);
+  skuStart.value = String((parseInt(skuStart.value, 10) || 1) + articles.length).padStart(width, "0");
+  saveSkuSettings();
+  refreshSkus();
+
+  statusEl.hidden = true;
+  btn.disabled = false;
+  $("batchResult").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 /* Extrait le dernier objet JSON valide contenant "titre" (balayage tolérant aux textes autour). */
@@ -541,7 +717,7 @@ $("outDesc").addEventListener("input", updateCounts);
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest(".copy");
   if (!btn) return;
-  const text = btn.hasAttribute("data-copy-url") ? $("outUrl").textContent : $(btn.dataset.copy).value;
+  const text = btn.dataset.copyText ?? (btn.hasAttribute("data-copy-url") ? $("outUrl").textContent : $(btn.dataset.copy).value);
   try {
     await navigator.clipboard.writeText(text);
   } catch {
@@ -556,6 +732,239 @@ document.addEventListener("click", async (e) => {
   btn.textContent = "Copié ✓";
   btn.classList.add("done");
   setTimeout(() => { btn.textContent = old; btn.classList.remove("done"); }, 1500);
+});
+
+/* ---------- Articles (mode série) ---------- */
+function addArticle() {
+  articles.push({ photos: [], infos: "", prix: "" });
+  renderArticles();
+}
+$("addArticle").addEventListener("click", addArticle);
+
+function renderArticles() {
+  const box = $("articles");
+  box.innerHTML = "";
+  articles.forEach((art, i) => box.appendChild(articleCard(art, i)));
+  refreshSkus();
+}
+
+function articleCard(art, i) {
+  const div = document.createElement("div");
+  div.className = "article";
+
+  const head = document.createElement("div");
+  head.className = "article-head";
+  const sku = document.createElement("span");
+  sku.className = "sku";
+  const del = document.createElement("button");
+  del.type = "button";
+  del.textContent = "🗑";
+  del.title = "Supprimer cet article";
+  del.addEventListener("click", () => { articles.splice(i, 1); renderArticles(); });
+  head.append(sku, del);
+
+  const dz = document.createElement("div");
+  dz.className = "dropzone small";
+  dz.innerHTML = "📷 <strong>Photos de l'article</strong>";
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.multiple = true;
+  input.hidden = true;
+  const thumbs = document.createElement("div");
+  thumbs.className = "thumbs";
+  dz.addEventListener("click", () => input.click());
+  dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag"); });
+  dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
+  dz.addEventListener("drop", async (e) => {
+    e.preventDefault();
+    dz.classList.remove("drag");
+    await importFiles(art.photos, e.dataTransfer.files);
+    renderThumbsInto(thumbs, art.photos);
+  });
+  input.addEventListener("change", async () => {
+    await importFiles(art.photos, input.files);
+    input.value = "";
+    renderThumbsInto(thumbs, art.photos);
+  });
+  renderThumbsInto(thumbs, art.photos);
+
+  const row = document.createElement("div");
+  row.className = "row";
+  row.style.marginTop = ".6rem";
+  const infos = document.createElement("input");
+  infos.type = "text";
+  infos.placeholder = "Infos : marque, taille, défauts…";
+  infos.value = art.infos;
+  infos.addEventListener("input", () => { art.infos = infos.value; });
+  const prix = document.createElement("input");
+  prix.type = "text";
+  prix.inputMode = "decimal";
+  prix.placeholder = "Prix souhaité (€) — facultatif";
+  prix.value = art.prix;
+  prix.addEventListener("input", () => { art.prix = prix.value; });
+  row.append(infos, prix);
+
+  div.append(head, dz, input, thumbs, row);
+  return div;
+}
+
+/* ---------- Résultats de la série ---------- */
+function renderBatchResults() {
+  const box = $("batchItems");
+  box.innerHTML = "";
+  batchResults.forEach((r, i) => {
+    const d = document.createElement("details");
+    d.className = "batch-item";
+    if (r.error) d.open = true;
+
+    const summary = document.createElement("summary");
+    const img = document.createElement("img");
+    img.src = r.thumb;
+    img.alt = "";
+    const skuSpan = document.createElement("span");
+    skuSpan.className = "sku";
+    skuSpan.textContent = r.sku;
+    const label = document.createElement("span");
+    label.className = "bi-label";
+    label.textContent = r.error ? "⚠️ Échec — dépliez pour le détail" : (r.ad.titre || "");
+    summary.append(img, skuSpan, label);
+    d.appendChild(summary);
+
+    if (r.error) {
+      const p = document.createElement("p");
+      p.className = "batch-err";
+      p.textContent = r.error;
+      d.appendChild(p);
+    } else {
+      d.appendChild(batchFields(r, i));
+    }
+    box.appendChild(d);
+  });
+}
+
+function batchFields(r, i) {
+  const frag = document.createDocumentFragment();
+
+  const titreField = document.createElement("div");
+  titreField.className = "result-field";
+  titreField.innerHTML = `<div class="result-head"><label>Titre</label><button class="copy" data-copy="bt_${i}">Copier</button></div>`;
+  const titre = document.createElement("input");
+  titre.type = "text";
+  titre.id = `bt_${i}`;
+  titre.value = r.ad.titre || "";
+  titre.addEventListener("input", () => { r.ad.titre = titre.value; });
+  titreField.appendChild(titre);
+
+  const descField = document.createElement("div");
+  descField.className = "result-field";
+  descField.innerHTML = `<div class="result-head"><label>Description</label><button class="copy" data-copy="bd_${i}">Copier</button></div>`;
+  const desc = document.createElement("textarea");
+  desc.rows = 7;
+  desc.id = `bd_${i}`;
+  desc.value = r.ad.description || "";
+  desc.addEventListener("input", () => { r.ad.description = desc.value; });
+  descField.appendChild(desc);
+
+  frag.append(titreField, descField);
+
+  const url = typeof r.ad.url_produit === "string" && /^https?:\/\//.test(r.ad.url_produit) ? r.ad.url_produit : null;
+  if (url) {
+    const urlField = document.createElement("div");
+    urlField.className = "result-field";
+    const headDiv = document.createElement("div");
+    headDiv.className = "result-head";
+    headDiv.innerHTML = "<label>Fiche produit</label>";
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "copy";
+    copyBtn.dataset.copyText = url;
+    copyBtn.textContent = "Copier";
+    headDiv.appendChild(copyBtn);
+    const line = document.createElement("div");
+    line.className = "url-line";
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = url;
+    line.appendChild(a);
+    urlField.append(headDiv, line);
+    frag.appendChild(urlField);
+  }
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  for (const [icon, val] of [["🗂", r.ad.categorie], ["💶", r.ad.prix_conseille], ["✔️", r.ad.etat]]) {
+    if (!val) continue;
+    const span = document.createElement("span");
+    span.className = "badge";
+    span.textContent = `${icon} ${val}`;
+    meta.appendChild(span);
+  }
+  frag.appendChild(meta);
+  return frag;
+}
+
+/* ---------- Exports : étiquettes et CSV ---------- */
+const escHtml = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function buildLabelsHtml() {
+  const ok = batchResults.filter((r) => !r.error);
+  const labels = ok.map((r) => `
+    <div class="label">
+      <div class="sku">${escHtml(r.sku)}</div>
+      <div class="titre">${escHtml(r.ad.titre)}</div>
+      <div class="prix">${escHtml(r.ad.prix_conseille || "")}</div>
+    </div>`).join("");
+  return `<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>Étiquettes ${escHtml(ok[0]?.sku || "")} → ${escHtml(ok[ok.length - 1]?.sku || "")}</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; }
+  .toolbar { padding: 12px; background: #f2f2f2; text-align: center; font-size: 14px; }
+  .toolbar button { padding: 8px 20px; font-size: 15px; cursor: pointer; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .label { border: 1px dashed #aaa; height: 38mm; padding: 4mm; box-sizing: border-box; overflow: hidden;
+           display: flex; flex-direction: column; justify-content: space-between; break-inside: avoid; }
+  .label .sku { font-size: 15pt; font-weight: 700; }
+  .label .titre { font-size: 8pt; color: #444; }
+  .label .prix { font-size: 11pt; font-weight: 600; }
+  @page { margin: 10mm; }
+  @media print { .toolbar { display: none; } }
+</style></head><body>
+<div class="toolbar"><button onclick="print()">🖨 Imprimer</button> — planche 3 colonnes, étiquettes ≈ 63 × 38 mm (type Avery L7160), à découper sur papier libre</div>
+<div class="grid">${labels}</div>
+</body></html>`;
+}
+
+function downloadBlob(content, type, filename) {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+const stamp = () => new Date().toISOString().slice(0, 10);
+
+$("printLabels").addEventListener("click", () => {
+  const w = window.open("", "_blank");
+  w.document.write(buildLabelsHtml());
+  w.document.close();
+});
+
+$("dlLabels").addEventListener("click", () => {
+  downloadBlob(buildLabelsHtml(), "text/html", `etiquettes-${stamp()}.html`);
+});
+
+$("exportCsv").addEventListener("click", () => {
+  const esc = (v) => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const rows = [["sku", "plateforme", "titre", "prix_conseille", "categorie", "etat", "url_produit", "description"].join(";")];
+  for (const r of batchResults) {
+    if (r.error) continue;
+    rows.push([r.sku, platform, r.ad.titre, r.ad.prix_conseille, r.ad.categorie, r.ad.etat, r.ad.url_produit || "", r.ad.description].map(esc).join(";"));
+  }
+  downloadBlob("\uFEFF" + rows.join("\r\n"), "text/csv;charset=utf-8", `annonces-${stamp()}.csv`);
 });
 
 /* ---------- Erreurs ---------- */
