@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Générateur d'annonces — Le Bon Coin &amp; Vinted</title>
+<style>
+  :root {
+    --accent: #ec5a13;
+    --accent-soft: #fdeee5;
+    --bg: #f7f6f4;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e4e1dd;
+    --radius: 14px;
+    font-size: 16px;
+  }
+  [data-platform="vinted"] {
+    --accent: #09847e;
+    --accent-soft: #e3f4f3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 1rem;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+  header h1 { font-size: 1.35rem; display: flex; align-items: center; gap: .5rem; }
+  header p { color: var(--muted); font-size: .9rem; margin-top: .25rem; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .card h2 { font-size: .95rem; margin-bottom: .6rem; }
+
+  /* Onglets plateforme */
+  .tabs { display: flex; gap: .5rem; }
+  .tabs button {
+    flex: 1; padding: .65rem; border-radius: 10px; border: 1.5px solid var(--border);
+    background: var(--card); font-size: .95rem; font-weight: 600; cursor: pointer; color: var(--muted);
+  }
+  .tabs button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+  /* Zone photos */
+  .dropzone {
+    border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 1.4rem 1rem; text-align: center; color: var(--muted); cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .dropzone.drag { border-color: var(--accent); background: var(--accent-soft); }
+  .dropzone strong { color: var(--accent); }
+  .thumbs { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+  .thumb { position: relative; width: 84px; height: 84px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb button {
+    position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border: none; border-radius: 50%;
+    background: rgba(0,0,0,.6); color: #fff; font-size: 13px; line-height: 1; cursor: pointer;
+  }
+
+  label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .3rem; }
+  select, textarea, input[type="password"], input[type="text"] {
+    width: 100%; padding: .6rem .7rem; border: 1px solid var(--border); border-radius: 10px;
+    font: inherit; background: #fff; color: var(--text);
+  }
+  textarea { resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+  .field { margin-bottom: .75rem; }
+  .hint { font-size: .78rem; color: var(--muted); margin-top: .25rem; }
+  .hint a { color: var(--accent); }
+
+  .go {
+    width: 100%; padding: .9rem; border: none; border-radius: 12px;
+    background: var(--accent); color: #fff; font-size: 1.05rem; font-weight: 700; cursor: pointer;
+  }
+  .go:disabled { opacity: .5; cursor: not-allowed; }
+
+  .status { text-align: center; color: var(--muted); font-size: .9rem; padding: .5rem; }
+  .spinner {
+    display: inline-block; width: 16px; height: 16px; border: 2.5px solid var(--accent-soft);
+    border-top-color: var(--accent); border-radius: 50%; vertical-align: -3px; margin-right: .5rem;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error {
+    background: #fdecea; border: 1px solid #f5c6c0; color: #a4271a;
+    border-radius: var(--radius); padding: .8rem 1rem; font-size: .9rem; white-space: pre-wrap;
+  }
+
+  /* Résultats */
+  .result-field { margin-bottom: 1rem; }
+  .result-head { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; margin-bottom: .3rem; }
+  .result-head label { margin: 0; }
+  .count { font-size: .75rem; color: var(--muted); }
+  .count.over { color: #c0261a; font-weight: 700; }
+  .copy {
+    border: 1px solid var(--border); background: #fff; border-radius: 8px;
+    padding: .25rem .6rem; font-size: .78rem; cursor: pointer; color: var(--text); white-space: nowrap;
+  }
+  .copy.done { border-color: var(--accent); color: var(--accent); }
+  .meta { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .badge {
+    background: var(--accent-soft); color: var(--accent); border-radius: 999px;
+    padding: .3rem .8rem; font-size: .85rem; font-weight: 600;
+  }
+  .url-line { display: flex; align-items: center; gap: .5rem; }
+  .url-line a { color: var(--accent); word-break: break-all; font-size: .9rem; }
+  .usage { font-size: .75rem; color: var(--muted); text-align: right; margin-top: .5rem; }
+
+  details.settings summary { cursor: pointer; font-size: .9rem; font-weight: 600; color: var(--muted); }
+  details.settings[open] summary { margin-bottom: .75rem; }
+  footer { text-align: center; font-size: .75rem; color: var(--muted); padding-bottom: 1rem; }
+</style>
+</head>
+<body data-platform="leboncoin">
+<div class="wrap">
+  <header>
+    <h1>📦 Générateur d'annonces</h1>
+    <p>Une photo → titre, description, lien produit et prix conseillé, prêts à coller dans votre annonce.</p>
+  </header>
+
+  <div class="tabs" id="tabs">
+    <button type="button" data-value="leboncoin" class="active">Le Bon Coin</button>
+    <button type="button" data-value="vinted">Vinted</button>
+  </div>
+
+  <section class="card">
+    <h2>1. Photos de l'objet</h2>
+    <div class="dropzone" id="dropzone">
+      📷 <strong>Ajouter des photos</strong><br>
+      <span style="font-size:.82rem">Cliquez, glissez-déposez ou prenez une photo (5 max — la première est la principale)</span>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+    <div class="thumbs" id="thumbs"></div>
+  </section>
+
+  <section class="card">
+    <h2>2. Détails (facultatif)</h2>
+    <div class="row">
+      <div class="field">
+        <label for="etat">État</label>
+        <select id="etat">
+          <option value="">Laisser l'IA estimer</option>
+          <option>Neuf avec étiquette</option>
+          <option>Neuf sans étiquette</option>
+          <option>Très bon état</option>
+          <option>Bon état</option>
+          <option>État satisfaisant</option>
+          <option>Pour pièces / à réparer</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="prix">Prix souhaité (€)</label>
+        <input type="text" id="prix" inputmode="decimal" placeholder="Laisser vide pour une estimation">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:0">
+      <label for="infos">Infos complémentaires</label>
+      <textarea id="infos" rows="2" placeholder="Marque, taille, défauts, accessoires inclus, raison de la vente…"></textarea>
+    </div>
+  </section>
+
+  <section class="card">
+    <details class="settings" id="settingsBox">
+      <summary>⚙️ Réglages — clé API</summary>
+      <div class="field" style="margin-bottom:0">
+        <label for="apiKey">Clé API Anthropic</label>
+        <input type="password" id="apiKey" placeholder="sk-ant-…" autocomplete="off">
+        <p class="hint">Créez une clé sur <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>. Elle est enregistrée uniquement dans votre navigateur.</p>
+      </div>
+    </details>
+  </section>
+
+  <button class="go" id="goBtn">✨ Générer l'annonce</button>
+  <div class="status" id="status" hidden></div>
+  <div class="error" id="error" hidden></div>
+
+  <section class="card" id="result" hidden>
+    <h2 id="resultTitle">Votre annonce</h2>
+
+    <div class="result-field">
+      <div class="result-head">
+        <label for="outTitre">Titre</label>
+        <span><span class="count" id="titreCount"></span>
+        <button class="copy" data-copy="outTitre">Copier</button></span>
+      </div>
+      <input type="text" id="outTitre">
+    </div>
+
+    <div class="result-field">
+      <div class="result-head">
+        <label for="outDesc">Description</label>
+        <span><span class="count" id="descCount"></span>
+        <button class="copy" data-copy="outDesc">Copier</button></span>
+      </div>
+      <textarea id="outDesc" rows="10"></textarea>
+    </div>
+
+    <div class="result-field" id="urlField" hidden>
+      <div class="result-head">
+        <label>Fiche produit sur le web</label>
+        <button class="copy" data-copy-url>Copier</button>
+      </div>
+      <div class="url-line"><a id="outUrl" href="#" target="_blank" rel="noopener"></a></div>
+    </div>
+
+    <div class="meta" id="metaBadges"></div>
+    <div class="usage" id="usage"></div>
+  </section>
+
+  <footer>Vos photos sont envoyées directement à l'API Anthropic depuis votre navigateur — aucun autre serveur.</footer>
+</div>
+
+<script>
+"use strict";
+
+const $ = (id) => document.getElementById(id);
+const MAX_PHOTOS = 5;
+const MAX_EDGE = 1568;        // taille max recommandée pour la vision Claude
+const LIMITS = {
+  leboncoin: { titre: 50, desc: 4000 },
+  vinted:    { titre: 100, desc: 3000 },
+};
+
+let platform = "leboncoin";
+let photos = [];   // { dataUrl, base64, mediaType }
+
+/* ---------- Clé API ---------- */
+const apiKeyInput = $("apiKey");
+apiKeyInput.value = localStorage.getItem("lbcvtd_api_key") || "";
+if (!apiKeyInput.value) $("settingsBox").open = true;
+apiKeyInput.addEventListener("change", () => {
+  localStorage.setItem("lbcvtd_api_key", apiKeyInput.value.trim());
+});
+
+/* ---------- Onglets plateforme ---------- */
+$("tabs").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-value]");
+  if (!btn) return;
+  platform = btn.dataset.value;
+  document.body.dataset.platform = platform;
+  for (const b of $("tabs").querySelectorAll("button")) b.classList.toggle("active", b === btn);
+  updateCounts();
+});
+
+/* ---------- Photos ---------- */
+const dropzone = $("dropzone");
+const fileInput = $("fileInput");
+dropzone.addEventListener("click", () => fileInput.click());
+dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("drag"); });
+dropzone.addEventListener("dragleave", () => dropzone.classList.remove("drag"));
+dropzone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropzone.classList.remove("drag");
+  addFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener("change", () => { addFiles(fileInput.files); fileInput.value = ""; });
+
+async function addFiles(fileList) {
+  hideError();
+  for (const file of Array.from(fileList)) {
+    if (photos.length >= MAX_PHOTOS) { showError(`Maximum ${MAX_PHOTOS} photos.`); break; }
+    if (!file.type.startsWith("image/") && !/\.(heic|heif)$/i.test(file.name)) continue;
+    try {
+      photos.push(await preparePhoto(file));
+    } catch {
+      showError(`Impossible de lire « ${file.name} ». Si c'est une photo iPhone au format HEIC, exportez-la en JPEG puis réessayez.`);
+    }
+  }
+  renderThumbs();
+}
+
+function preparePhoto(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const scale = Math.min(1, MAX_EDGE / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+        URL.revokeObjectURL(url);
+        resolve({ dataUrl, base64: dataUrl.split(",")[1], mediaType: "image/jpeg" });
+      } catch (err) { URL.revokeObjectURL(url); reject(err); }
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("decode")); };
+    img.src = url;
+  });
+}
+
+function renderThumbs() {
+  const box = $("thumbs");
+  box.innerHTML = "";
+  photos.forEach((p, i) => {
+    const div = document.createElement("div");
+    div.className = "thumb";
+    const img = document.createElement("img");
+    img.src = p.dataUrl;
+    img.alt = `Photo ${i + 1}`;
+    const del = document.createElement("button");
+    del.type = "button";
+    del.textContent = "×";
+    del.setAttribute("aria-label", "Retirer cette photo");
+    del.addEventListener("click", () => { photos.splice(i, 1); renderThumbs(); });
+    div.append(img, del);
+    box.appendChild(div);
+  });
+}
+
+/* ---------- Prompt ---------- */
+function buildSystemPrompt() {
+  const common = `Tu rédiges des annonces de vente d'occasion pour un particulier en France, à partir de photos.
+
+Méthode :
+1. Identifie précisément l'objet : nature, marque, modèle, référence, couleur, matière — tout ce qui est visible sur les photos.
+2. Si l'objet est identifiable (marque/modèle), utilise la recherche web pour : confirmer le modèle exact, trouver l'URL de la fiche produit officielle (site du fabricant en priorité, sinon une page de référence fiable en français), et estimer le prix du marché en occasion en France.
+3. Rédige l'annonce en français, honnête et vendeuse : ne jamais inventer de caractéristiques non vérifiées, mentionner les défauts visibles.
+4. Ne jamais inclure de coordonnées personnelles.
+
+Réponds à la fin UNIQUEMENT avec un objet JSON exactement de cette forme, sans texte autour ni bloc de code :
+{
+  "titre": "…",
+  "description": "…",
+  "url_produit": "https://… ou null si introuvable ou objet non identifiable",
+  "categorie": "…",
+  "prix_conseille": "ex : 25–35 €",
+  "etat": "…"
+}`;
+
+  const perPlatform = platform === "leboncoin"
+    ? `Plateforme cible : leboncoin.
+- Titre : ${LIMITS.leboncoin.titre} caractères maximum, format « Marque Modèle — caractéristique clé », sans majuscules abusives ni émojis.
+- Description : structurée en courtes lignes ou petits paragraphes (ce que c'est, état, caractéristiques, dimensions si pertinent), maximum ${LIMITS.leboncoin.desc} caractères. Pas de hashtags.
+- Catégorie : la catégorie leboncoin la plus adaptée (ex : Ameublement, Électroménager, Informatique, Image & Son, Vêtements, Chaussures, Sports & Loisirs, Bricolage, Jardin & Plantes, Jeux & Jouets, Livres, Décoration…).`
+    : `Plateforme cible : Vinted.
+- Titre : court et précis (max ${LIMITS.vinted.titre} caractères) : marque + type d'article + détail clé (taille, couleur…).
+- Description : courte et efficace (max ${LIMITS.vinted.desc} caractères) : matière, taille et mesures si visibles, état, défauts éventuels. Termine par 3 à 6 hashtags pertinents (#marque #type…).
+- Catégorie : la catégorie Vinted la plus adaptée (ex : Femmes > Robes, Hommes > Sneakers, Enfants > Jouets…).`;
+
+  return common + "\n\n" + perPlatform;
+}
+
+function buildUserText() {
+  const parts = [`Génère l'annonce à partir de ${photos.length > 1 ? "ces photos (elles montrent le même objet)" : "cette photo"}.`];
+  const etat = $("etat").value;
+  const prix = $("prix").value.trim();
+  const infos = $("infos").value.trim();
+  if (etat) parts.push(`État indiqué par le vendeur : ${etat}.`);
+  if (prix) parts.push(`Prix souhaité par le vendeur : ${prix} €. Reprends ce prix dans "prix_conseille" ; s'il est très éloigné du marché, indique plutôt "${prix} € (marché : …)".`);
+  if (infos) parts.push(`Infos complémentaires du vendeur : ${infos}`);
+  return parts.join("\n");
+}
+
+/* ---------- Appel API ---------- */
+const STATUS_STEPS = [
+  "Analyse des photos…",
+  "Identification du produit…",
+  "Recherche web (fiche produit, prix)…",
+  "Rédaction de l'annonce…",
+];
+
+$("goBtn").addEventListener("click", generate);
+
+async function generate() {
+  hideError();
+  $("result").hidden = true;
+
+  const apiKey = apiKeyInput.value.trim();
+  if (!apiKey) {
+    $("settingsBox").open = true;
+    apiKeyInput.focus();
+    return showError("Renseignez d'abord votre clé API Anthropic (section Réglages).");
+  }
+  if (photos.length === 0) return showError("Ajoutez au moins une photo de l'objet.");
+
+  const btn = $("goBtn");
+  btn.disabled = true;
+  let step = 0;
+  const statusEl = $("status");
+  statusEl.hidden = false;
+  const showStep = () => { statusEl.innerHTML = `<span class="spinner"></span>${STATUS_STEPS[Math.min(step, STATUS_STEPS.length - 1)]}`; step++; };
+  showStep();
+  const ticker = setInterval(showStep, 6000);
+
+  try {
+    const body = {
+      model: "claude-opus-5",
+      max_tokens: 8000,
+      fallbacks: "default",
+      system: buildSystemPrompt(),
+      tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 4 }],
+      messages: [{
+        role: "user",
+        content: [
+          ...photos.map((p) => ({
+            type: "image",
+            source: { type: "base64", media_type: p.mediaType, data: p.base64 },
+          })),
+          { type: "text", text: buildUserText() },
+        ],
+      }],
+    };
+
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-beta": "server-side-fallback-2026-07-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!resp.ok) {
+      let detail = "";
+      try { detail = (await resp.json()).error?.message || ""; } catch {}
+      if (resp.status === 401) throw new Error("Clé API invalide ou révoquée. Vérifiez-la dans les Réglages.");
+      if (resp.status === 429) throw new Error("Limite de requêtes atteinte. Patientez une minute puis réessayez.");
+      if (resp.status === 529) throw new Error("L'API est momentanément surchargée. Réessayez dans quelques instants.");
+      throw new Error(`Erreur API (${resp.status})${detail ? " : " + detail : ""}`);
+    }
+
+    const data = await resp.json();
+    if (data.stop_reason === "refusal") {
+      throw new Error("La requête a été refusée par les filtres de sécurité de l'API. Réessayez avec d'autres photos.");
+    }
+    const text = (data.content || [])
+      .filter((b) => b.type === "text")
+      .map((b) => b.text)
+      .join("\n");
+    const ad = extractJson(text);
+    if (!ad || !ad.titre) {
+      throw new Error("Réponse inattendue de l'API — réessayez.\n\nDétail : " + text.slice(0, 400));
+    }
+    renderResult(ad, data.usage);
+  } catch (err) {
+    if (err instanceof TypeError) {
+      showError("Impossible de joindre l'API Anthropic. Vérifiez votre connexion internet.");
+    } else {
+      showError(err.message);
+    }
+  } finally {
+    clearInterval(ticker);
+    statusEl.hidden = true;
+    btn.disabled = false;
+  }
+}
+
+/* Extrait le dernier objet JSON valide contenant "titre" (balayage tolérant aux textes autour). */
+function extractJson(text) {
+  let best = null;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] !== "{") continue;
+    let depth = 0, inStr = false, esc = false;
+    for (let j = i; j < text.length; j++) {
+      const c = text[j];
+      if (esc) { esc = false; continue; }
+      if (c === "\\") { esc = true; continue; }
+      if (c === '"') { inStr = !inStr; continue; }
+      if (inStr) continue;
+      if (c === "{") depth++;
+      else if (c === "}") {
+        depth--;
+        if (depth === 0) {
+          try {
+            const obj = JSON.parse(text.slice(i, j + 1));
+            if (obj && typeof obj === "object" && "titre" in obj) best = obj;
+          } catch {}
+          i = j;
+          break;
+        }
+      }
+    }
+  }
+  return best;
+}
+
+/* ---------- Affichage du résultat ---------- */
+function renderResult(ad, usage) {
+  $("resultTitle").textContent = platform === "leboncoin" ? "Votre annonce Le Bon Coin" : "Votre annonce Vinted";
+  $("outTitre").value = ad.titre || "";
+  $("outDesc").value = ad.description || "";
+
+  const url = typeof ad.url_produit === "string" && /^https?:\/\//.test(ad.url_produit) ? ad.url_produit : null;
+  $("urlField").hidden = !url;
+  if (url) {
+    const a = $("outUrl");
+    a.href = url;
+    a.textContent = url;
+  }
+
+  const badges = $("metaBadges");
+  badges.innerHTML = "";
+  for (const [icon, val] of [["🗂", ad.categorie], ["💶", ad.prix_conseille], ["✔️", ad.etat]]) {
+    if (!val) continue;
+    const span = document.createElement("span");
+    span.className = "badge";
+    span.textContent = `${icon} ${val}`;
+    badges.appendChild(span);
+  }
+
+  if (usage) {
+    const cost = ((usage.input_tokens || 0) * 5 + (usage.output_tokens || 0) * 25) / 1e6;
+    $("usage").textContent = `${usage.input_tokens} tokens entrée · ${usage.output_tokens} sortie · coût ≈ $${cost.toFixed(3)}`;
+  } else {
+    $("usage").textContent = "";
+  }
+
+  updateCounts();
+  $("result").hidden = false;
+  $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function updateCounts() {
+  const lim = LIMITS[platform];
+  const t = $("outTitre").value.length;
+  const d = $("outDesc").value.length;
+  const tc = $("titreCount"), dc = $("descCount");
+  tc.textContent = `${t}/${lim.titre}`;
+  dc.textContent = `${d}/${lim.desc}`;
+  tc.classList.toggle("over", t > lim.titre);
+  dc.classList.toggle("over", d > lim.desc);
+}
+$("outTitre").addEventListener("input", updateCounts);
+$("outDesc").addEventListener("input", updateCounts);
+
+/* ---------- Copier ---------- */
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".copy");
+  if (!btn) return;
+  const text = btn.hasAttribute("data-copy-url") ? $("outUrl").textContent : $(btn.dataset.copy).value;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+  const old = btn.textContent;
+  btn.textContent = "Copié ✓";
+  btn.classList.add("done");
+  setTimeout(() => { btn.textContent = old; btn.classList.remove("done"); }, 1500);
+});
+
+/* ---------- Erreurs ---------- */
+function showError(msg) { const el = $("error"); el.textContent = msg; el.hidden = false; }
+function hideError() { $("error").hidden = true; }
+</script>
+</body>
+</html>
