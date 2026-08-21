@@ -7,7 +7,7 @@ Un outil tout simple : vous déposez une ou plusieurs **photos** d'un objet, et 
 - **URL de la fiche produit** sur le web, le cas échéant (site du fabricant en priorité)
 - Catégorie suggérée, prix conseillé et état estimé
 
-L'analyse des photos et la recherche web sont faites par l'API Claude (modèle `claude-opus-5`, avec l'outil de recherche web d'Anthropic). Deux plateformes : **Le Bon Coin** (par défaut) et **Vinted** (titre plus court, description avec hashtags).
+L'analyse des photos et la recherche web sont faites par l'API Google Gemini (modèle `gemini-2.5-flash` par défaut, avec la recherche Google intégrée) — **gratuite** pour cet usage avec une clé AI Studio. Deux plateformes : **Le Bon Coin** (par défaut) et **Vinted** (titre plus court, description avec hashtags).
 
 ## Mode « En série + SKU »
 
@@ -22,7 +22,7 @@ Pour vider une armoire ou un garage d'un coup :
 
 ## Utilisation
 
-1. **Obtenez une clé API Anthropic** : créez un compte sur [console.anthropic.com](https://console.anthropic.com), ajoutez un peu de crédit, puis créez une clé dans *Settings → API Keys*.
+1. **Obtenez une clé API Google gratuite** : connectez-vous sur [aistudio.google.com/apikey](https://aistudio.google.com/apikey) avec un compte Google et créez une clé (aucune carte bancaire demandée).
 2. **Ouvrez `index.html`** dans votre navigateur (double-clic suffit — aucune installation, aucun serveur).
 3. Collez votre clé API dans la section *Réglages* (elle est mémorisée uniquement dans votre navigateur, via `localStorage`).
 4. Ajoutez vos photos, choisissez la plateforme, cliquez sur **Générer l'annonce**.
@@ -36,13 +36,18 @@ L'outil sera alors disponible à l'adresse `https://<votre-compte>.github.io/lbc
 
 ## Coût
 
-Chaque génération consomme quelques milliers de tokens (photos + recherche web) : comptez environ **0,05 à 0,15 $ par annonce**. Le coût estimé s'affiche sous chaque résultat.
+**0 €** avec une clé AI Studio gratuite, dans les limites du palier gratuit (largement suffisant pour un usage personnel) :
+
+- jusqu'à ~1 000 requêtes par jour sur les modèles Flash, avec un débit de 5 à 15 requêtes/minute — en cas de dépassement ponctuel, l'outil attend et réessaie automatiquement ;
+- la recherche Google intégrée (« grounding ») est gratuite jusqu'à 1 500 requêtes/jour sur la famille Gemini 2.5.
+
+Même en passant sur le palier payant, `gemini-2.5-flash-lite` revient à moins d'un centime par annonce.
 
 ## Confidentialité et notes techniques
 
-- Les photos sont redimensionnées dans le navigateur puis envoyées **directement à l'API Anthropic** — aucun autre serveur n'intervient, rien n'est stocké en ligne.
+- Les photos sont redimensionnées dans le navigateur puis envoyées **directement à l'API Google Gemini** — aucun autre serveur n'intervient.
 - Les photos au format HEIC (iPhone) sont converties automatiquement sur Safari ; sur les autres navigateurs, exportez-les d'abord en JPEG.
-- Les *refusal fallbacks* de l'API sont activés (`fallbacks: "default"`) : si les filtres de sécurité déclinent une requête, elle est automatiquement relancée sur un modèle de repli au lieu d'échouer.
+- Le modèle est réglable dans la section *Réglages* (`gemini-2.5-flash` recommandé, `gemini-2.5-flash-lite` plus rapide) ; pour ajouter un autre modèle, il suffit d'ajouter une `<option>` dans `index.html`.
 
 ## Pistes d'évolution
 
