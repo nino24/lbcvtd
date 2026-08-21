@@ -15,7 +15,7 @@ Pour vider une armoire ou un garage d'un coup :
 
 1. **Réglez les SKU en début de session** : un préfixe (ex. `LBC-`) et un premier numéro (ex. `001`). Ces réglages sont mémorisés dans le navigateur, et le compteur avance automatiquement après chaque série — la session suivante repart au bon numéro.
 2. **Ajoutez un article par objet** (photos + infos/prix facultatifs). Chaque carte affiche son SKU en direct.
-3. **Générez la série** : les annonces sont produites l'une après l'autre (une erreur sur un article n'arrête pas les autres). Chaque description se termine par `Réf. : SKU` (désactivable) pour retrouver l'objet quand il se vend.
+3. **Générez la série** : les annonces sont produites l'une après l'autre (une erreur sur un article n'arrête pas les autres). En cas de limite de requêtes, de surcharge de l'API ou de coupure réseau, l'outil réessaie automatiquement jusqu'à 3 fois (attentes de 10, 20 puis 40 s, avec compte à rebours affiché). Chaque description se termine par `Réf. : SKU` (désactivable) pour retrouver l'objet quand il se vend.
 4. **Exportez** :
    - **🖨 Imprimer les étiquettes** / **⬇️ Fichier étiquettes** : une planche imprimable (3 colonnes, étiquettes ≈ 63 × 38 mm, compatible Avery L7160 ou papier libre à découper) avec SKU, titre et prix — à coller sur chaque objet ou sac.
    - **⬇️ Export CSV** : le récapitulatif complet (SKU, plateforme, titre, prix, catégorie, état, URL, description), séparateur `;`, ouvrable directement dans Excel/LibreOffice pour suivre vos ventes.

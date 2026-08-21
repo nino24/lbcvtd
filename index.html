@@ -525,10 +525,13 @@ async function callClaude(apiKey, photoList, userText) {
   if (!resp.ok) {
     let detail = "";
     try { detail = (await resp.json()).error?.message || ""; } catch {}
-    if (resp.status === 401) throw new Error("Clé API invalide ou révoquée. Vérifiez-la dans les Réglages.");
-    if (resp.status === 429) throw new Error("Limite de requêtes atteinte. Patientez une minute puis réessayez.");
-    if (resp.status === 529) throw new Error("L'API est momentanément surchargée. Réessayez dans quelques instants.");
-    throw new Error(`Erreur API (${resp.status})${detail ? " : " + detail : ""}`);
+    let msg = `Erreur API (${resp.status})${detail ? " : " + detail : ""}`;
+    if (resp.status === 401) msg = "Clé API invalide ou révoquée. Vérifiez-la dans les Réglages.";
+    if (resp.status === 429) msg = "Limite de requêtes atteinte. Patientez une minute puis réessayez.";
+    if (resp.status === 529) msg = "L'API est momentanément surchargée. Réessayez dans quelques instants.";
+    const err = new Error(msg);
+    err.status = resp.status;
+    throw err;
   }
 
   const data = await resp.json();
@@ -544,6 +547,27 @@ async function callClaude(apiKey, photoList, userText) {
     throw new Error("Réponse inattendue de l'API — réessayez.\n\nDétail : " + text.slice(0, 400));
   }
   return { ad, usage: data.usage || {} };
+}
+
+/* Reprise automatique : limite de requêtes (429), surcharge (529) ou coupure réseau. */
+const RETRY_DELAYS = [10, 20, 40]; // secondes d'attente avant chaque nouvelle tentative
+
+async function callClaudeWithRetry(apiKey, photoList, userText, setStatus) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await callClaude(apiKey, photoList, userText);
+    } catch (err) {
+      const retryable = err instanceof TypeError || err.status === 429 || err.status === 529;
+      if (!retryable || attempt >= RETRY_DELAYS.length) throw err;
+      const cause = err.status === 429 ? "Limite de requêtes atteinte"
+        : err.status === 529 ? "API momentanément surchargée"
+        : "Connexion interrompue";
+      for (let s = RETRY_DELAYS[attempt]; s > 0; s--) {
+        setStatus(`${cause} — nouvelle tentative dans ${s} s (essai ${attempt + 2}/${RETRY_DELAYS.length + 1})…`);
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+    }
+  }
 }
 
 async function generateSingle() {
@@ -565,7 +589,10 @@ async function generateSingle() {
 
   try {
     const userText = buildUserText(photos.length, $("etat").value, $("prix").value.trim(), $("infos").value.trim());
-    const { ad, usage } = await callClaude(apiKey, photos, userText);
+    const { ad, usage } = await callClaudeWithRetry(apiKey, photos, userText, (m) => {
+      clearInterval(ticker); // le compte à rebours remplace le carrousel d'étapes
+      statusEl.innerHTML = `<span class="spinner"></span>${m}`;
+    });
     renderResult(ad, usage);
   } catch (err) {
     showError(err instanceof TypeError ? "Impossible de joindre l'API Anthropic. Vérifiez votre connexion internet." : err.message);
@@ -601,10 +628,13 @@ async function generateBatch() {
   for (let i = 0; i < articles.length; i++) {
     const art = articles[i];
     const sku = skuFor(i);
-    statusEl.innerHTML = `<span class="spinner"></span>Article ${i + 1}/${articles.length} (${sku}) — analyse, recherche web et rédaction…`;
+    const prefix = `Article ${i + 1}/${articles.length} (${sku}) — `;
+    statusEl.innerHTML = `<span class="spinner"></span>${prefix}analyse, recherche web et rédaction…`;
     try {
       const userText = buildUserText(art.photos.length, "", art.prix.trim(), art.infos.trim());
-      const { ad, usage } = await callClaude(apiKey, art.photos, userText);
+      const { ad, usage } = await callClaudeWithRetry(apiKey, art.photos, userText, (m) => {
+        statusEl.innerHTML = `<span class="spinner"></span>${prefix}${m}`;
+      });
       if ($("skuInDesc").checked) ad.description = `${ad.description || ""}\n\nRéf. : ${sku}`.trim();
       batchResults.push({ sku, ad, thumb: art.photos[0].dataUrl });
       totalIn += usage.input_tokens || 0;
