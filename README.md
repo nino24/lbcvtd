@@ -39,7 +39,7 @@ L'outil sera alors disponible à l'adresse `https://<votre-compte>.github.io/lbc
 **0 €** avec une clé AI Studio gratuite, dans les limites du palier gratuit (largement suffisant pour un usage personnel) :
 
 - jusqu'à ~1 000 requêtes par jour sur les modèles Flash, avec un débit de 5 à 15 requêtes/minute — en cas de dépassement ponctuel, l'outil attend et réessaie automatiquement ;
-- la recherche Google intégrée (« grounding ») est gratuite jusqu'à 5 000 requêtes/mois sur la famille Gemini 3.x.
+- la recherche Google intégrée (« grounding ») est en principe gratuite jusqu'à 5 000 requêtes/mois sur la famille Gemini 3.x — mais sur certaines clés gratuites ce quota est à zéro et l'API répond « limite atteinte » dès qu'elle est activée. Dans ce cas l'outil **bascule automatiquement sans recherche web** (l'annonce est générée quand même, avec un badge « Sans recherche web » : le prix et l'URL sont alors à vérifier), et vous pouvez désactiver la recherche durablement dans les *Réglages*.
 
 Même en passant sur le palier payant, un modèle Flash-Lite revient à moins d'un centime par annonce.
 

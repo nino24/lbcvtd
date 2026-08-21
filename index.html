@@ -228,6 +228,10 @@
         <input type="password" id="apiKey" placeholder="AIza…" autocomplete="off">
         <p class="hint">Créez une clé <strong>gratuite</strong> sur <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com</a> (pas de carte bancaire). Elle est enregistrée uniquement dans votre navigateur.</p>
       </div>
+      <div class="field">
+        <label class="checkline"><input type="checkbox" id="useSearch" checked> Recherche web (URL produit et prix du marché)</label>
+        <p class="hint">La recherche Google n'est pas toujours incluse dans le palier gratuit. Si l'API répond sans cesse « limite atteinte », l'outil bascule automatiquement sans recherche ; vous pouvez aussi la décocher ici.</p>
+      </div>
       <div class="field" style="margin-bottom:0">
         <label for="modelSel">Modèle</label>
         <select id="modelSel">
@@ -320,6 +324,9 @@ const modelSel = $("modelSel");
 modelSel.value = localStorage.getItem("lbcvtd_model") || "gemini-3.6-flash";
 if (!modelSel.value) modelSel.value = "gemini-3.6-flash"; // valeur mémorisée absente des options
 modelSel.addEventListener("change", () => localStorage.setItem("lbcvtd_model", modelSel.value));
+const useSearchBox = $("useSearch");
+useSearchBox.checked = localStorage.getItem("lbcvtd_search") !== "0";
+useSearchBox.addEventListener("change", () => localStorage.setItem("lbcvtd_search", useSearchBox.checked ? "1" : "0"));
 
 /* Actualise la liste avec les modèles Flash réellement disponibles pour cette clé
    (Google retire régulièrement les anciens modèles pour les nouveaux comptes). */
@@ -478,12 +485,15 @@ function renderThumbsInto(box, list) {
 }
 
 /* ---------- Prompt ---------- */
-function buildSystemPrompt() {
+function buildSystemPrompt(useSearch) {
+  const step2 = useSearch
+    ? `2. Si l'objet est identifiable (marque/modèle), utilise la recherche web pour : confirmer le modèle exact, trouver l'URL de la fiche produit officielle (site du fabricant en priorité, sinon une page de référence fiable en français), et estimer le prix du marché en occasion en France.`
+    : `2. La recherche web n'est pas disponible pour cette requête : appuie-toi uniquement sur les photos et tes connaissances. Ne renseigne "url_produit" que si tu es absolument certain de l'URL officielle (sinon null), et donne un prix estimé prudent.`;
   const common = `Tu rédiges des annonces de vente d'occasion pour un particulier en France, à partir de photos.
 
 Méthode :
 1. Identifie précisément l'objet : nature, marque, modèle, référence, couleur, matière — tout ce qui est visible sur les photos.
-2. Si l'objet est identifiable (marque/modèle), utilise la recherche web pour : confirmer le modèle exact, trouver l'URL de la fiche produit officielle (site du fabricant en priorité, sinon une page de référence fiable en français), et estimer le prix du marché en occasion en France.
+${step2}
 3. Rédige l'annonce en français, honnête et vendeuse : ne jamais inventer de caractéristiques non vérifiées, mentionner les défauts visibles.
 4. Ne jamais inclure de coordonnées personnelles.
 
@@ -539,9 +549,9 @@ function requireApiKey() {
   return apiKey;
 }
 
-async function callGemini(apiKey, photoList, userText) {
+async function callGemini(apiKey, photoList, userText, useSearch) {
   const body = {
-    system_instruction: { parts: [{ text: buildSystemPrompt() }] },
+    system_instruction: { parts: [{ text: buildSystemPrompt(useSearch) }] },
     contents: [{
       role: "user",
       parts: [
@@ -551,9 +561,9 @@ async function callGemini(apiKey, photoList, userText) {
         { text: userText },
       ],
     }],
-    tools: [{ google_search: {} }],
     generationConfig: { maxOutputTokens: 8000 },
   };
+  if (useSearch) body.tools = [{ google_search: {} }];
 
   const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelSel.value}:generateContent`, {
     method: "POST",
@@ -571,7 +581,7 @@ async function callGemini(apiKey, photoList, userText) {
     if (resp.status === 400 && /api key/i.test(detail)) msg = "Clé API invalide. Vérifiez-la dans les Réglages (créez-la sur aistudio.google.com).";
     if (resp.status === 403) msg = "Clé API refusée ou non autorisée. Vérifiez-la dans les Réglages.";
     if (resp.status === 404) { msg = `Le modèle ${modelSel.value} n'est plus disponible. La liste vient d'être actualisée : choisissez un autre modèle dans les Réglages et relancez.`; refreshModels(); }
-    if (resp.status === 429) msg = "Limite du palier gratuit atteinte. Patientez une minute puis réessayez.";
+    if (resp.status === 429) msg = "Limite du palier gratuit atteinte. Patientez une minute puis réessayez." + (detail ? `\n\nDétail Google : ${detail}` : "");
     if (resp.status === 500 || resp.status === 503) msg = "L'API est momentanément surchargée. Réessayez dans quelques instants.";
     const err = new Error(msg);
     err.status = resp.status;
@@ -605,10 +615,19 @@ async function callGemini(apiKey, photoList, userText) {
 const RETRY_DELAYS = [10, 20, 40]; // secondes d'attente avant chaque nouvelle tentative
 
 async function callGeminiWithRetry(apiKey, photoList, userText, setStatus) {
+  let useSearch = useSearchBox.checked;
   for (let attempt = 0; ; attempt++) {
     try {
-      return await callGemini(apiKey, photoList, userText);
+      const r = await callGemini(apiKey, photoList, userText, useSearch);
+      return { ...r, usedSearch: useSearch };
     } catch (err) {
+      // Le quota gratuit de la recherche Google est souvent à zéro : on retente aussitôt sans elle.
+      if (err.status === 429 && useSearch) {
+        useSearch = false;
+        setStatus("Quota de recherche web épuisé — nouvel essai sans recherche…");
+        attempt--;
+        continue;
+      }
       const retryable = err instanceof TypeError || err.status === 429 || err.status === 500 || err.status === 503;
       if (!retryable || attempt >= RETRY_DELAYS.length) throw err;
       const cause = err.status === 429 ? "Limite du palier gratuit atteinte"
@@ -641,11 +660,11 @@ async function generateSingle() {
 
   try {
     const userText = buildUserText(photos.length, $("etat").value, $("prix").value.trim(), $("infos").value.trim());
-    const { ad, usage } = await callGeminiWithRetry(apiKey, photos, userText, (m) => {
+    const { ad, usage, usedSearch } = await callGeminiWithRetry(apiKey, photos, userText, (m) => {
       clearInterval(ticker); // le compte à rebours remplace le carrousel d'étapes
       statusEl.innerHTML = `<span class="spinner"></span>${m}`;
     });
-    renderResult(ad, usage);
+    renderResult(ad, usage, usedSearch);
   } catch (err) {
     showError(err instanceof TypeError ? "Impossible de joindre l'API Google. Vérifiez votre connexion internet." : err.message);
   } finally {
@@ -684,11 +703,11 @@ async function generateBatch() {
     statusEl.innerHTML = `<span class="spinner"></span>${prefix}analyse, recherche web et rédaction…`;
     try {
       const userText = buildUserText(art.photos.length, "", art.prix.trim(), art.infos.trim());
-      const { ad, usage } = await callGeminiWithRetry(apiKey, art.photos, userText, (m) => {
+      const { ad, usage, usedSearch } = await callGeminiWithRetry(apiKey, art.photos, userText, (m) => {
         statusEl.innerHTML = `<span class="spinner"></span>${prefix}${m}`;
       });
       if ($("skuInDesc").checked) ad.description = `${ad.description || ""}\n\nRéf. : ${sku}`.trim();
-      batchResults.push({ sku, ad, thumb: art.photos[0].dataUrl });
+      batchResults.push({ sku, ad, thumb: art.photos[0].dataUrl, noSearch: !usedSearch });
       totalIn += usage.input_tokens || 0;
       totalOut += usage.output_tokens || 0;
     } catch (err) {
@@ -746,7 +765,7 @@ function extractJson(text) {
 }
 
 /* ---------- Affichage du résultat ---------- */
-function renderResult(ad, usage) {
+function renderResult(ad, usage, usedSearch) {
   $("resultTitle").textContent = platform === "leboncoin" ? "Votre annonce Le Bon Coin" : "Votre annonce Vinted";
   $("outTitre").value = ad.titre || "";
   $("outDesc").value = ad.description || "";
@@ -761,7 +780,9 @@ function renderResult(ad, usage) {
 
   const badges = $("metaBadges");
   badges.innerHTML = "";
-  for (const [icon, val] of [["🗂", ad.categorie], ["💶", ad.prix_conseille], ["✔️", ad.etat]]) {
+  const items = [["🗂", ad.categorie], ["💶", ad.prix_conseille], ["✔️", ad.etat]];
+  if (usedSearch === false) items.push(["🔎", "Sans recherche web (prix et URL à vérifier)"]);
+  for (const [icon, val] of items) {
     if (!val) continue;
     const span = document.createElement("span");
     span.className = "badge";
@@ -974,7 +995,9 @@ function batchFields(r, i) {
 
   const meta = document.createElement("div");
   meta.className = "meta";
-  for (const [icon, val] of [["🗂", r.ad.categorie], ["💶", r.ad.prix_conseille], ["✔️", r.ad.etat]]) {
+  const items = [["🗂", r.ad.categorie], ["💶", r.ad.prix_conseille], ["✔️", r.ad.etat]];
+  if (r.noSearch) items.push(["🔎", "Sans recherche web"]);
+  for (const [icon, val] of items) {
     if (!val) continue;
     const span = document.createElement("span");
     span.className = "badge";
