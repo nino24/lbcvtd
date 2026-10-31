@@ -1,0 +1,4 @@
+journaux/
+__pycache__/
+*_maj.xlsx
+cle*.json

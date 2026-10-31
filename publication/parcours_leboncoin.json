@@ -1,0 +1,57 @@
+{
+  "_a_lire": "Parcours de dépôt leboncoin : à CALIBRER sur votre compte (python publier.py calibrer). Les intitulés ci-dessous sont des points de départ ; leboncoin modifie régulièrement son formulaire. Chaque 'cible' peut lister plusieurs alternatives, essayées dans l'ordre. Valeurs entre accolades = colonnes du tableau (titre, description, prix, categorie, etat, marque, code_postal, ville, poids_kg, quantite).",
+  "url_depot": "https://www.leboncoin.fr/deposer-une-annonce",
+  "etapes": [
+    {"nom": "Titre", "action": "remplir", "valeur": "{titre}",
+     "cible": [{"label": "Titre de l'annonce"}, {"placeholder": "titre"}, {"css": "input[name='subject']"}]},
+    {"nom": "Continuer après titre", "action": "cliquer", "optionnel": true,
+     "cible": [{"role": "button", "name": "Continuer"}]},
+
+    {"nom": "Catégorie", "action": "cliquer",
+     "cible": [{"role": "radio", "name": "{categorie}"}, {"texte": "{categorie}", "exact": true}]},
+    {"nom": "Continuer après catégorie", "action": "cliquer", "optionnel": true,
+     "cible": [{"role": "button", "name": "Continuer"}]},
+
+    {"nom": "État", "action": "choisir", "valeur": "{etat}", "optionnel": true,
+     "cible": [{"label": "État"}, {"role": "combobox", "name": "État"}]},
+    {"nom": "Marque", "action": "remplir", "valeur": "{marque}", "optionnel": true, "si_rempli": "marque",
+     "cible": [{"label": "Marque"}]},
+    {"nom": "Continuer après critères", "action": "cliquer", "optionnel": true,
+     "cible": [{"role": "button", "name": "Continuer"}]},
+
+    {"nom": "Description", "action": "remplir", "valeur": "{description}",
+     "cible": [{"label": "Description de l'annonce"}, {"css": "textarea[name='body']"}, {"css": "textarea"}]},
+    {"nom": "Continuer après description", "action": "cliquer", "optionnel": true,
+     "cible": [{"role": "button", "name": "Continuer"}]},
+
+    {"nom": "Prix", "action": "remplir", "valeur": "{prix}",
+     "cible": [{"label": "Votre prix de vente"}, {"label": "Prix"}, {"css": "input[name='price']"}]},
+    {"nom": "Quantité (pro)", "action": "remplir", "valeur": "{quantite}", "optionnel": true, "si_rempli": "quantite",
+     "cible": [{"label": "Quantité"}]},
+    {"nom": "Activer la livraison", "action": "cliquer", "optionnel": true, "si_oui": "livraison",
+     "cible": [{"role": "checkbox", "name": "livraison"}, {"texte": "Proposer la livraison"}]},
+    {"nom": "Poids du colis", "action": "cliquer", "optionnel": true, "si_oui": "livraison",
+     "cible": [{"role": "radio", "name": "{poids_kg} kg"}]},
+    {"nom": "Continuer après prix", "action": "cliquer", "optionnel": true,
+     "cible": [{"role": "button", "name": "Continuer"}]},
+
+    {"nom": "Photos", "action": "photos", "attente_ms": 1500,
+     "cible": [{"css": "input[type='file']", "attente_ms": 8000}]},
+    {"nom": "Continuer après photos", "action": "cliquer", "optionnel": true,
+     "cible": [{"role": "button", "name": "Continuer"}]},
+
+    {"nom": "Localisation", "action": "taper", "valeur": "{code_postal}", "optionnel": true,
+     "cible": [{"label": "Adresse"}, {"placeholder": "code postal"}, {"role": "combobox", "name": "Localisation"}]},
+    {"nom": "Choix de la ville proposée", "action": "cliquer", "optionnel": true,
+     "cible": [{"role": "option", "attente_ms": 6000}]},
+    {"nom": "Continuer après localisation", "action": "cliquer", "optionnel": true,
+     "cible": [{"role": "button", "name": "Continuer"}]},
+
+    {"nom": "Refuser les options payantes", "action": "cliquer", "optionnel": true,
+     "cible": [{"role": "button", "name": "Continuer sans option"}, {"texte": "Continuer sans"}]},
+
+    {"nom": "Bouton final", "action": "valider",
+     "cible": [{"role": "button", "name": "Publier"}, {"role": "button", "name": "Déposer mon annonce"}, {"role": "button", "name": "Valider"}]}
+  ],
+  "confirmation": {"url_contient": "confirmation|annonce|/ad/"}
+}

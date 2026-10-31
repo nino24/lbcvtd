@@ -49,8 +49,12 @@ Même en passant sur le palier payant, un modèle Flash-Lite revient à moins d'
 - Les photos au format HEIC (iPhone) sont converties automatiquement sur Safari ; sur les autres navigateurs, exportez-les d'abord en JPEG.
 - Le modèle est réglable dans la section *Réglages* (`gemini-3.6-flash` recommandé). La liste est **actualisée automatiquement** avec les modèles Flash disponibles pour votre clé — Google retirant régulièrement les anciens modèles, l'outil ne reste jamais bloqué sur un modèle disparu.
 
+## Publication en masse sur leboncoin
+
+Le dossier [`publication/`](publication/README.md) contient un tableau modèle (Excel / Google Sheets) et l'outil `publier.py` qui dépose sur votre compte leboncoin pro chaque ligne au statut « À publier », puis réécrit statut, date et lien dans le tableau.
+
 ## Pistes d'évolution
 
-- Publication directe via l'API leboncoin / Vinted (nécessite un compte pro ou partenaire)
+- Export direct du mode série vers le tableau de publication
 - Génération multi-annonces en série (un dossier de photos → plusieurs annonces)
 - Estimation de prix affinée à partir des annonces similaires en cours
