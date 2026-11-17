@@ -10,9 +10,11 @@
 
 *Pas d'ordre imposé, on avance au rythme des idées. On coche quand c'est décidé.*
 
-- [ ] Quel ressenti on veut donner en 3 secondes ? (ADN, ton)
+- [x] Quel ressenti on veut donner en 3 secondes ? → confiance, bonne affaire, expérience (point 2)
+- [ ] Le ton de voix (tutoiement/vouvoiement, registre)
 - [ ] Des vidéos / comptes qui t'inspirent (et ce que tu n'aimes pas)
-- [ ] Les types de vidéos qu'on va produire en priorité
+- [x] Les plateformes → TikTok + Instagram en court, YouTube en long (point 2)
+- [ ] Les types de vidéos courtes (extraits de live, produit, teaser…) et longues (replay, format dédié…)
 - [ ] Couleurs
 - [ ] Polices
 - [ ] Style des sous-titres
@@ -32,6 +34,15 @@
 - **Décision / piste :**
 - **Statut :** 💡 / 🧪 / ✅ (→ DA.md §…) / ❌
 -->
+
+### Point 2 — 2026-11-17 — Le ressenti et les plateformes
+- **Sujet :** ADN de la marque, formats
+- **Ce qu'on s'est dit :** en tombant sur une vidéo, on doit ressentir trois choses : **confiance**, **bonne affaire**, **expérience**. Diffusion : TikTok et Instagram en format court, YouTube en format long.
+- **Décision :**
+  - Les 3 piliers du ressenti : confiance · bonne affaire · expérience
+  - Court (9:16) → TikTok + Instagram ; long (16:9) → YouTube
+- **À préciser :** ce que recouvre « expérience » (l'ambiance du live ? le plaisir de la découverte ? le moment partagé avec la communauté ?)
+- **Statut :** ✅ (→ DA.md §1 et §8)
 
 ### Point 1 — 2026-11-17 — Démarrage
 - **Sujet :** méthode

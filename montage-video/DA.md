@@ -4,14 +4,21 @@
 > Rien n'est écrit ici à l'avance : chaque règle arrive depuis une session de travail notée dans `JOURNAL-DA.md`.
 > Une section vide = pas encore décidé, et c'est normal.
 
-Version : **v0.1** — dernière mise à jour : 2026-11-17
+Version : **v0.2** — dernière mise à jour : 2026-11-17
 
 ---
 
 ## 1. ADN de la marque en vidéo
 *Promesse, ton, ce qu'on veut faire ressentir.*
 
-— pas encore décidé —
+**Les 3 piliers du ressenti** — ce qu'une personne doit ressentir dès les premières secondes *(point 2)* :
+1. **Confiance**
+2. **Bonne affaire**
+3. **Expérience**
+
+Toute vidéo doit servir au moins un de ces piliers ; idéalement les trois.
+
+*Ton de voix, promesse : pas encore décidé.*
 
 ## 2. Couleurs
 
@@ -39,7 +46,12 @@ Version : **v0.1** — dernière mise à jour : 2026-11-17
 
 ## 8. Formats & structures de vidéos
 
-— pas encore décidé —
+| Famille | Ratio | Plateformes | Source |
+|---|---|---|---|
+| Format court | 9:16 (1080×1920) | TikTok, Instagram (Reels, Stories) | point 2 |
+| Format long | 16:9 (1920×1080) | YouTube | point 2 |
+
+*Types de vidéos, durées et structures : pas encore décidé.*
 
 ## 9. Toujours / Jamais
 
