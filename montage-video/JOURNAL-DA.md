@@ -1,44 +1,40 @@
-# Journal DA — ce qu'on apprend, vidéo après vidéo
+# Journal DA — on construit la DA ensemble, point par point
 
-> **Comment l'alimenter :** une entrée par vidéo publiée, par test, ou par retour (client, monteur, plateforme).
-> Les plus récentes **en haut**. Statuts : 🧪 test · 👀 à surveiller · ✅ intégré dans `DA.md` · ❌ abandonné
-> Règle de promotion : un point confirmé par les chiffres **ou** vu 3 fois → on l'intègre dans `DA.md`.
-
----
-
-## 📌 Points acquis (résumé vivant)
-
-*Liste courte des enseignements les plus importants. On la relit avant chaque session de montage.*
-
-- Hook produit < 1,5 s, sans logo — *règle de départ, à confirmer par nos chiffres*
-- Sous-titres obligatoires, 1 mot-clé surligné — *règle de départ*
-- ⟨à enrichir au fil des vidéos⟩
+> **Fonctionnement :** à chaque échange sur la DA (une idée, une vidéo qui t'a plu, un test, un retour), on ajoute un **point** ci-dessous.
+> Statuts : 💡 idée · 🧪 à tester · ✅ validé → reporté dans `DA.md` · ❌ abandonné
+> Les plus récents **en haut**. Un point ✅ est recopié dans la bonne section de `DA.md`.
 
 ---
 
-## 🧪 Tests en cours
+## 🧭 Chantier — les questions à trancher, au fil de l'eau
 
-| Démarré le | Hypothèse | Comment on mesure | Statut |
-|---|---|---|---|
-| ⟨date⟩ | ⟨ex. Prix affiché dès le hook → plus de rétention⟩ | Rétention à 3 s et taux de complétion vs moyenne | 🧪 |
+*Pas d'ordre imposé, on avance au rythme des idées. On coche quand c'est décidé.*
+
+- [ ] Quel ressenti on veut donner en 3 secondes ? (ADN, ton)
+- [ ] Des vidéos / comptes qui t'inspirent (et ce que tu n'aimes pas)
+- [ ] Les types de vidéos qu'on va produire en priorité
+- [ ] Couleurs
+- [ ] Polices
+- [ ] Style des sous-titres
+- [ ] Musique & sons signature
+- [ ] Rythme de montage
+- [ ] Logo, écran de fin, éléments récurrents
+- [ ] Les « jamais » de la marque
 
 ---
 
-## 📓 Entrées
+## 📓 Points
 
-<!-- Copier ce bloc pour chaque nouvelle entrée -->
-<!--
-### AAAA-MM-JJ — titre court
-- **Vidéo / contexte :** nom du fichier, plateforme, format
-- **Ce qu'on a fait :**
-- **Résultat :** vues · rétention 3 s · % complétion · ventes / clics / inscrits au live
-- **Enseignement :**
-- **Décision :** garder / tester encore / abandonner
-- **Statut :** 🧪 / 👀 / ✅ intégré dans DA.md §… / ❌
+<!-- Modèle d'un point :
+### Point N — AAAA-MM-JJ — titre court
+- **Sujet :** (couleurs, sous-titres, son…)
+- **Ce qu'on s'est dit :**
+- **Décision / piste :**
+- **Statut :** 💡 / 🧪 / ✅ (→ DA.md §…) / ❌
 -->
 
-### 2026-11-17 — Création de la charte
-- **Contexte :** mise en place du dossier `montage-video/` pour garder une DA constante
-- **Ce qu'on a fait :** charte v1.0 avec des réglages par défaut (hook < 1,5 s, sous-titres obligatoires, −14 LUFS, 9:16 prioritaire)
-- **Décision :** compléter les `⟨à compléter⟩` de `DA.md` (couleurs exactes, polices, logo, musiques)
+### Point 1 — 2026-11-17 — Démarrage
+- **Sujet :** méthode
+- **Ce qu'on s'est dit :** pas d'idée arrêtée sur la DA pour l'instant ; on la construit à deux, progressivement, plutôt que de partir d'une charte toute faite.
+- **Décision :** `DA.md` reste vide tant que rien n'est validé ; chaque échange donne un point dans ce journal.
 - **Statut :** ✅
