@@ -20,7 +20,7 @@
 - [ ] Style des sous-titres
 - [ ] Musique & sons signature
 - [ ] Rythme de montage
-- [ ] Logo, écran de fin, éléments récurrents
+- [ ] Logo, écran de fin, éléments récurrents → piste : animation palette (point 3)
 - [ ] Les « jamais » de la marque
 
 ---
@@ -34,6 +34,18 @@
 - **Décision / piste :**
 - **Statut :** 💡 / 🧪 / ✅ (→ DA.md §…) / ❌
 -->
+
+### Point 3 — 2026-11-17 — Première vidéo : ShopTonStock, 10 ans d'expérience
+- **Sujet :** marque, accroche, animation
+- **Ce qu'on s'est dit :** vidéo face caméra devant l'entrepôt, à sous-titrer, avec une animation « type palette » portant trois messages : *10 ans d'expérience* · *Le grossiste préféré de ton grossiste préféré* · *ShopTonStock by AMZBooster*.
+- **Décision / piste :**
+  - Nom de marque à l'écran : **SHOPTONSTOCK** (en gros) + **by AMZBOOSTER** (en petit)
+  - Signature : **« Le grossiste préféré de ton grossiste préféré »**
+  - Proposition d'animation : une palette en bois entre à l'écran, un carton tombe dessus avec le message (intro : « 10 ANS D'EXPÉRIENCE » ; fin : cartons SHOPTONSTOCK + by AMZBOOSTER empilés, signature au-dessus) → univers carton / bois cohérent avec l'entrepôt
+  - Mot mis en couleur dans la signature : « DE TON » (orange carton)
+  - Outil réutilisable : `outils/animation_palette.py`
+- **À valider :** l'animation palette comme élément récurrent d'intro/fin ? les couleurs carton/bois comme base de palette ?
+- **Statut :** 🧪 (v1 de la vidéo à valider)
 
 ### Point 2 — 2026-11-17 — Le ressenti et les plateformes
 - **Sujet :** ADN de la marque, formats
