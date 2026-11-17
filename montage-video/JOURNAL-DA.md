@@ -17,7 +17,7 @@
 - [ ] Les types de vidéos courtes (extraits de live, produit, teaser…) et longues (replay, format dédié…)
 - [ ] Couleurs
 - [ ] Polices
-- [ ] Style des sous-titres
+- [ ] Style des sous-titres → piste v2 (point 4)
 - [ ] Musique & sons signature
 - [ ] Rythme de montage
 - [ ] Logo, écran de fin, éléments récurrents → piste : animation palette (point 3)
@@ -34,6 +34,17 @@
 - **Décision / piste :**
 - **Statut :** 💡 / 🧪 / ✅ (→ DA.md §…) / ❌
 -->
+
+### Point 4 — 2026-11-17 — v2 ShopTonStock : sous-titres + moment Whatnot
+- **Sujet :** sous-titres, transition, appel à l'action
+- **Ce qu'on s'est dit :** sous-titrer toute la vidéo ; quand Whatnot est cité, déclencher une transition avec le logo, et afficher **« 25€ à l'inscription » via le lien en bio 🚀**.
+- **Proposé dans la v2 :**
+  - **Sous-titres** : Inter Black blanc, contour noir, 2 à 5 mots, apparition « pop », bas d'écran au-dessus de l'interface. Mots-clés en **orange carton** (palettes, Amazon, livraison gratuite, 1€, Whatnot, 240 000 produits…)
+  - **Transition Whatnot** : zoom-punch + flash + « whoosh » au moment exact où le mot est prononcé, puis un carton tombe, s'ouvre, et le logo Whatnot en sort ; le carton porte « 25€ À L'INSCRIPTION » + pastille « Lien en bio 🚀 »
+  - **Rappel permanent** : bandeau discret en haut « whatnot · 25€ à l'inscription · lien en bio 🚀 » entre les deux mentions et jusqu'à la fin
+  - Son normalisé à −14 LUFS
+- **À valider :** le style des sous-titres (casse, police, couleur des mots-clés) ; la transition Whatnot comme modèle pour toutes les mentions de plateforme ; le logo officiel Whatnot à fournir (la v2 utilise une reproduction provisoire)
+- **Statut :** 🧪
 
 ### Point 3 — 2026-11-17 — Première vidéo : ShopTonStock, 10 ans d'expérience
 - **Sujet :** marque, accroche, animation
