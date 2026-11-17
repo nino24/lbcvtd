@@ -54,3 +54,7 @@ Même en passant sur le palier payant, un modèle Flash-Lite revient à moins d'
 - Publication directe via l'API leboncoin / Vinted (nécessite un compte pro ou partenaire)
 - Génération multi-annonces en série (un dossier de photos → plusieurs annonces)
 - Estimation de prix affinée à partir des annonces similaires en cours
+
+## Montage vidéo & direction artistique
+
+Le dossier [`montage-video/`](montage-video/README.md) contient la charte DA vidéo (`DA.md`), le process de montage (`MONTAGE.md`), le journal des enseignements (`JOURNAL-DA.md`) et un modèle de brief — à alimenter au fil des vidéos pour garder une identité constante.
