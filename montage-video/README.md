@@ -7,6 +7,7 @@ Ce dossier est la **mémoire de la direction artistique (DA)** de nos vidéos. O
 | [`DA.md`](DA.md) | La charte — uniquement les décisions validées, remplie au fur et à mesure | Avant chaque montage, et à donner à tout nouveau monteur |
 | [`MONTAGE.md`](MONTAGE.md) | La technique : formats, zones de sécurité, export, checklist | Pendant le montage |
 | [`JOURNAL-DA.md`](JOURNAL-DA.md) | Les points DA numérotés, un par échange, + la liste des questions à trancher | À chaque session DA |
+| [`SERIE-VLOG.md`](SERIE-VLOG.md) | La bible de la série de vlogs YouTube : objectifs, cible B2B, épisodes, structure | Avant chaque épisode |
 | [`briefs/_MODELE-BRIEF.md`](briefs/_MODELE-BRIEF.md) | Le modèle de brief à dupliquer pour chaque vidéo | Avant de tourner ou d'envoyer des rushes |
 
 ## Comment on construit la DA

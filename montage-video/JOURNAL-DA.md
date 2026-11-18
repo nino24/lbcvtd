@@ -14,7 +14,8 @@
 - [ ] Le ton de voix (tutoiement/vouvoiement, registre)
 - [ ] Des vidéos / comptes qui t'inspirent (et ce que tu n'aimes pas)
 - [x] Les plateformes → TikTok + Instagram en court, YouTube en long (point 2)
-- [ ] Les types de vidéos courtes (extraits de live, produit, teaser…) et longues (replay, format dédié…)
+- [ ] Les types de vidéos courtes (extraits de live, produit, teaser…)
+- [x] Format long → série de vlogs entreprise, marketing puis B2B (point 5, voir `SERIE-VLOG.md`)
 - [ ] Couleurs
 - [ ] Polices
 - [ ] Style des sous-titres → piste v2 (point 4)
@@ -34,6 +35,13 @@
 - **Décision / piste :**
 - **Statut :** 💡 / 🧪 / ✅ (→ DA.md §…) / ❌
 -->
+
+### Point 5 — 2026-11-18 — Format long : une série de vlogs
+- **Sujet :** YouTube, objectif de la série
+- **Ce qu'on s'est dit :** le format long sera une **série de vlogs** sur l'entreprise et ce qu'elle est capable de faire. Objectif n°1 : le **marketing**. Objectif n°2 : le **démarchage de clients B2B**.
+- **Décision :** création de `SERIE-VLOG.md`, la bible de la série (objectifs validés ; idées d'épisodes, structure et diffusion proposées en 💡)
+- **À trancher :** la cible B2B précise, l'action attendue d'un pro après la vidéo, le rythme, qui filme
+- **Statut :** ✅ objectifs · 💡 le reste
 
 ### Point 4 — 2026-11-17 — v2 ShopTonStock : sous-titres + moment Whatnot
 - **Sujet :** sous-titres, transition, appel à l'action
