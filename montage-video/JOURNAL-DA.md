@@ -42,7 +42,7 @@
 - **Décision :** parcours **vidéo → site → appel**. Le site sert de relais (et permet de mesurer), le téléphone reste le moyen de conclure.
 - **Pistes :** page pro dédiée avec bouton « Appeler » + formulaire de secours ; un lien suivi par épisode ; une phrase de fin d'épisode toujours identique
 - **Site :** **shoptonstock.fr**
-- **Piste DA :** afficher `shoptonstock.fr` sur l'écran de fin (shorts et vlogs), sous le carton SHOPTONSTOCK
+- **Écran de fin ✅ :** `shoptonstock.fr` affiché sous la palette, dans une pastille blanche, à la fin de chaque vidéo (shorts et vlogs) — appliqué dès la v3 de la vidéo ShopTonStock
 - **Statut :** ✅ parcours et site · 💡 pistes
 
 ### Point 7 — 2026-11-18 — Les 3 profils de revendeurs

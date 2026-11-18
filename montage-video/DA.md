@@ -4,7 +4,7 @@
 > Rien n'est écrit ici à l'avance : chaque règle arrive depuis une session de travail notée dans `JOURNAL-DA.md`.
 > Une section vide = pas encore décidé, et c'est normal.
 
-Version : **v0.3** — dernière mise à jour : 2026-11-17
+Version : **v0.4** — dernière mise à jour : 2026-11-17
 
 ---
 
@@ -54,6 +54,11 @@ Toute vidéo doit servir au moins un de ces piliers ; idéalement les trois.
 *Types de vidéos, durées et structures : pas encore décidé.*
 
 ## 9. Toujours / Jamais
+
+**Toujours**
+- Afficher **shoptonstock.fr** sur l'écran de fin de chaque vidéo, shorts comme vlogs *(point 8)*
+
+**Jamais**
 
 — pas encore décidé —
 

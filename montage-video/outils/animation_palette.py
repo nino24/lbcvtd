@@ -85,7 +85,7 @@ def intro(out):
 
 def outro(out,dur=3.6):
     os.makedirs(out,exist_ok=True); n=int(dur*FPS)
-    PW=760; PY=1380
+    PW=760; PY=1220
     fb=font_fit("SHOPTONSTOCK",FB,600,110); fs=font_fit("by AMZBOOSTER",FX,400,58)
     fA=ImageFont.truetype(FB,64); fB=ImageFont.truetype(FB,64)
     for i in range(n):
@@ -105,6 +105,15 @@ def outro(out,dur=3.6):
             text_center(img,330+dy,"LE GROSSISTE PRÉFÉRÉ",fA,alpha=a)
             text_center(img,420+dy,"DE TON",fA,alpha=a,fill=(240,190,120))
             text_center(img,510+dy,"GROSSISTE PRÉFÉRÉ",fA,alpha=a)
+        if t>=1.9:
+            k=ease_out_back((t-1.9)/0.35,1.6)
+            fu=ImageFont.truetype(FX,58); txt="shoptonstock.fr"; bb=fu.getbbox(txt)
+            pw,ph=bb[2]-bb[0]+80,92
+            p=Image.new("RGBA",(pw,ph),(0,0,0,0)); pd=ImageDraw.Draw(p)
+            pd.rounded_rectangle([0,0,pw-1,ph-1],ph//2,fill=(255,255,255),outline=(17,17,17),width=5)
+            pd.text((40-bb[0],(ph-(bb[3]-bb[1]))//2-bb[1]),txt,font=fu,fill=(17,17,17))
+            sw,sh=max(1,int(pw*k)),max(1,int(ph*k)); p=p.resize((sw,sh),Image.LANCZOS)
+            img.alpha_composite(p,(int(W/2-sw/2),int(py+int(PW*0.22)+40+ph/2-sh/2)))
         img.save(f"{out}/{i:04d}.png")
     return n
 
