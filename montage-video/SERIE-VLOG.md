@@ -34,10 +34,10 @@ Aujourd'hui les revendeurs **appellent directement**. On garde ce réflexe, mais
 
 **Vidéo → site internet → appel (ou formulaire)**
 
-- 💡 Une page dédiée aux pros sur le site (ex. `/revendeurs`) avec : le bouton **« Appeler »** (clic = appel sur téléphone), un formulaire court en secours (profil marché / magasin / live, volume, ville), et quelques preuves (chiffres, extraits de vlogs)
+- 💡 Une page dédiée aux pros sur le site (ex. `shoptonstock.fr/revendeurs`) avec : le bouton **« Appeler »** (clic = appel sur téléphone), un formulaire court en secours (profil marché / magasin / live, volume, ville), et quelques preuves (chiffres, extraits de vlogs)
 - 💡 Un lien **par épisode** (paramètre de suivi, ex. `?src=vlog-ep1`) pour savoir quels épisodes ramènent des clients pros
 - 💡 À l'oral en fin d'épisode, une phrase simple et toujours la même : « Tu es revendeur ? Le lien est en description, tu nous appelles directement. »
-- URL du site : ⟨à compléter⟩ · page pro existante : ⟨oui / non⟩
+- URL du site : **shoptonstock.fr** ✅ · page pro existante : ⟨oui / non⟩ → lien d'épisode type : `shoptonstock.fr/revendeurs?src=vlog-ep1`
 
 ## 3. Nom & concept de la série — à définir
 

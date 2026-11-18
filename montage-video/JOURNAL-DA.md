@@ -41,7 +41,9 @@
 - **Ce qu'on s'est dit :** les revendeurs contactent aujourd'hui **directement par téléphone** ; il existe un **site internet** vers lequel on peut rediriger.
 - **Décision :** parcours **vidéo → site → appel**. Le site sert de relais (et permet de mesurer), le téléphone reste le moyen de conclure.
 - **Pistes :** page pro dédiée avec bouton « Appeler » + formulaire de secours ; un lien suivi par épisode ; une phrase de fin d'épisode toujours identique
-- **Statut :** ✅ parcours · 💡 pistes
+- **Site :** **shoptonstock.fr**
+- **Piste DA :** afficher `shoptonstock.fr` sur l'écran de fin (shorts et vlogs), sous le carton SHOPTONSTOCK
+- **Statut :** ✅ parcours et site · 💡 pistes
 
 ### Point 7 — 2026-11-18 — Les 3 profils de revendeurs
 - **Sujet :** cible de la série vlog
