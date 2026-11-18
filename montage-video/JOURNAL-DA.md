@@ -36,6 +36,13 @@
 - **Statut :** 💡 / 🧪 / ✅ (→ DA.md §…) / ❌
 -->
 
+### Point 6 — 2026-11-18 — Cible B2B : tous les revendeurs
+- **Sujet :** cible de la série vlog
+- **Ce qu'on s'est dit :** les revendeurs sont de **tous les corps de métier** et de **toutes les tailles**.
+- **Décision :** la cible B2B = toute personne ou entreprise qui revend. On parle de ce qui leur est commun (marge, fiabilité, volume, simplicité) et on montre leur diversité.
+- **Pistes :** format récurrent « Portrait de revendeur » ; un point d'entrée unique pour les pros qui qualifie ensuite (métier, volume, ville)
+- **Statut :** ✅ cible · 💡 pistes
+
 ### Point 5 — 2026-11-18 — Format long : une série de vlogs
 - **Sujet :** YouTube, objectif de la série
 - **Ce qu'on s'est dit :** le format long sera une **série de vlogs** sur l'entreprise et ce qu'elle est capable de faire. Objectif n°1 : le **marketing**. Objectif n°2 : le **démarchage de clients B2B**.
