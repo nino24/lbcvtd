@@ -36,6 +36,13 @@
 - **Statut :** 💡 / 🧪 / ✅ (→ DA.md §…) / ❌
 -->
 
+### Point 8 — 2026-11-18 — Appel à l'action pro : le site, puis le téléphone
+- **Sujet :** conversion B2B
+- **Ce qu'on s'est dit :** les revendeurs contactent aujourd'hui **directement par téléphone** ; il existe un **site internet** vers lequel on peut rediriger.
+- **Décision :** parcours **vidéo → site → appel**. Le site sert de relais (et permet de mesurer), le téléphone reste le moyen de conclure.
+- **Pistes :** page pro dédiée avec bouton « Appeler » + formulaire de secours ; un lien suivi par épisode ; une phrase de fin d'épisode toujours identique
+- **Statut :** ✅ parcours · 💡 pistes
+
 ### Point 7 — 2026-11-18 — Les 3 profils de revendeurs
 - **Sujet :** cible de la série vlog
 - **Ce qu'on s'est dit :** même si les métiers et les tailles varient, la clientèle se répartit en **3 profils** : ceux qui font les **marchés**, ceux qui ont un **magasin**, ceux qui font de la **vente en live**.

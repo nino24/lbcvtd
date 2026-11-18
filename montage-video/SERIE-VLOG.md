@@ -28,7 +28,16 @@ Conséquences pour la série :
 - 💡 Format récurrent **« Portrait de revendeur »** : on alterne les 3 profils (marché → magasin → live) = témoignage + chaque pro se reconnaît
 - 💡 Un **point d'entrée unique** pour les pros, qui fait le tri ensuite (ex. formulaire court : « Tu fais les marchés / tu as un magasin / tu vends en live ? », volume, ville) plutôt qu'un appel à l'action par profil
 
-- Ce qu'on veut qu'un pro fasse après la vidéo : ⟨à définir : appeler, formulaire, groupe WhatsApp pro, visite de l'entrepôt…⟩
+### Ce qu'un pro fait après la vidéo ✅ (point 8)
+
+Aujourd'hui les revendeurs **appellent directement**. On garde ce réflexe, mais on fait passer la vidéo **par le site** :
+
+**Vidéo → site internet → appel (ou formulaire)**
+
+- 💡 Une page dédiée aux pros sur le site (ex. `/revendeurs`) avec : le bouton **« Appeler »** (clic = appel sur téléphone), un formulaire court en secours (profil marché / magasin / live, volume, ville), et quelques preuves (chiffres, extraits de vlogs)
+- 💡 Un lien **par épisode** (paramètre de suivi, ex. `?src=vlog-ep1`) pour savoir quels épisodes ramènent des clients pros
+- 💡 À l'oral en fin d'épisode, une phrase simple et toujours la même : « Tu es revendeur ? Le lien est en description, tu nous appelles directement. »
+- URL du site : ⟨à compléter⟩ · page pro existante : ⟨oui / non⟩
 
 ## 3. Nom & concept de la série — à définir
 
@@ -61,12 +70,13 @@ Conséquences pour la série :
 ## 6. Diffusion 💡
 
 - 1 épisode long YouTube → **5 à 8 shorts** découpés pour TikTok / Insta / YouTube Shorts, qui renvoient vers l'épisode
-- Description YouTube : lien pro dédié (formulaire / contact B2B) + lien Whatnot 25 €
+- Description YouTube : **lien vers la page pro du site** (en 1re ligne, visible sans dérouler) + lien Whatnot 25 €
+- Écran de fin YouTube : rappel « Revendeurs → lien en description »
 
 ## 7. Questions ouvertes
 
 - [x] Qui sont les clients B2B visés ? → tous métiers, toutes tailles (point 6)
-- [ ] Quelle action concrète un pro doit faire après la vidéo ?
+- [x] Quelle action concrète un pro doit faire après la vidéo ? → aller sur le site, puis appeler (point 8)
 - [ ] Rythme de publication (1 par semaine ? toutes les 2 semaines ?)
 - [ ] Durée des épisodes (8–12 min ? 15–20 min ?)
 - [ ] Qui filme ? (seul au téléphone, un collaborateur, un caméraman)
