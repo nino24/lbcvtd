@@ -12,15 +12,21 @@
 
 → Conséquence : chaque épisode doit être **regardable par le grand public** et **utile à un acheteur pro**.
 
-## 2. Cible B2B ✅ (point 6)
+## 2. Cible B2B ✅ (points 6 et 7)
 
-**Tous les corps de métier, toutes les tailles.** Pas un profil unique : la cible, c'est **toute personne ou entreprise qui revend**.
+**Tous les corps de métier, toutes les tailles** — mais **3 grands profils** de revendeurs :
+
+| Profil | Ce qui compte pour lui 💡 | Ce qu'il veut voir dans une vidéo 💡 |
+|---|---|---|
+| 🧺 **Marchés** (forains, brocantes, vide-greniers) | Produits qui partent vite, prix d'achat bas, lots faciles à transporter | Combien il a payé, combien il revend, sa journée de marché |
+| 🏪 **Magasins** (boutiques, déstockage, solderies) | Régularité de l'approvisionnement, état des produits, réassort | La qualité du tri, la régularité des arrivages, un magasin client |
+| 📱 **Vendeurs en live** (Whatnot, TikTok…) | Produits qui font réagir le chat, volume pour tenir un live, marge | Un live qui cartonne, les produits stars, les chiffres d'un live |
 
 Conséquences pour la série :
 - 💡 On ne parle pas « à un métier » mais de ce que **tous les revendeurs** veulent : marge, fiabilité, volume adapté, simplicité
 - 💡 On montre la **diversité** : chaque revendeur qui se voit à l'écran (petit vendeur en live, boutique, grossiste…) se dit « c'est pour moi aussi »
-- 💡 Format récurrent **« Portrait de revendeur »** : un client différent par épisode (métier et taille différents) = témoignage + preuve qu'on sert tout le monde
-- 💡 Un **point d'entrée unique** pour les pros, qui fait le tri ensuite (ex. formulaire court : métier, volume, ville) plutôt qu'un appel à l'action par profil
+- 💡 Format récurrent **« Portrait de revendeur »** : on alterne les 3 profils (marché → magasin → live) = témoignage + chaque pro se reconnaît
+- 💡 Un **point d'entrée unique** pour les pros, qui fait le tri ensuite (ex. formulaire court : « Tu fais les marchés / tu as un magasin / tu vends en live ? », volume, ville) plutôt qu'un appel à l'action par profil
 
 - Ce qu'on veut qu'un pro fasse après la vidéo : ⟨à définir : appeler, formulaire, groupe WhatsApp pro, visite de l'entrepôt…⟩
 
@@ -39,6 +45,9 @@ Conséquences pour la série :
 | 5 | Comment on trie, teste et prépare une palette | Sérieux, qualité | Rassurer l'acheteur pro |
 | 6 | 10 ans d'e-commerce : nos erreurs et ce qu'on a appris | Crédibilité, histoire | Montrer l'expérience |
 | 7 | On livre une grosse commande pro | Capacité, fiabilité | Montrer qu'on sait gérer du volume |
+| 8 | Une journée au marché avec un client : de notre palette à son étal | Bonne affaire, concret | 🧺 Marchés |
+| 9 | On réassort un magasin client | Fiabilité, régularité | 🏪 Magasins |
+| 10 | Une palette, un live : combien un vendeur en live en tire | Expérience, chiffres | 📱 Live |
 
 ## 5. Structure type d'un épisode 💡
 

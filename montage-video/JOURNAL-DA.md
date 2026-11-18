@@ -36,6 +36,12 @@
 - **Statut :** 💡 / 🧪 / ✅ (→ DA.md §…) / ❌
 -->
 
+### Point 7 — 2026-11-18 — Les 3 profils de revendeurs
+- **Sujet :** cible de la série vlog
+- **Ce qu'on s'est dit :** même si les métiers et les tailles varient, la clientèle se répartit en **3 profils** : ceux qui font les **marchés**, ceux qui ont un **magasin**, ceux qui font de la **vente en live**.
+- **Décision :** les 3 profils structurent la série : les « Portraits de revendeur » alternent marché → magasin → live, et 3 épisodes dédiés (un par profil) sont ajoutés aux idées
+- **Statut :** ✅ profils · 💡 épisodes
+
 ### Point 6 — 2026-11-18 — Cible B2B : tous les revendeurs
 - **Sujet :** cible de la série vlog
 - **Ce qu'on s'est dit :** les revendeurs sont de **tous les corps de métier** et de **toutes les tailles**.
